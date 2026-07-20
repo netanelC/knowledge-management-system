@@ -4,8 +4,11 @@ import { handleAssetUpload } from './service';
 
 const router = Router();
 
-// Configure multer for in-memory storage
-const upload = multer({ storage: multer.memoryStorage() });
+// Configure multer for in-memory storage (limit file size to 5MB to prevent OOM)
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } 
+});
 
 router.post('/', upload.single('file'), (req: Request, res: Response, next: NextFunction) => {
   try {
