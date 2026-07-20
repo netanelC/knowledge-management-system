@@ -2,6 +2,11 @@ packages:
   - 'apps/*'
   - 'packages/*'
 
+allowBuilds:
+  '@prisma/engines': true
+  esbuild: true
+  prisma: true
+
 catalog:
   eslint: '^10.7.0'
   supertest: '^7.2.2'
