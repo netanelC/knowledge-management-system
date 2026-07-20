@@ -18,6 +18,10 @@ This document outlines the coding standards and quality requirements for this re
 
 - **README Updates:** Always revise the main `README.md` and/or component-level READMEs when adding new features, changing environment configurations, or altering setup instructions.
 
+## 4. Skills
+
+- **Node-TS Skills:** Implement and Review according to `node-ts-architect` and `nodejs-ts-testing-expert` skills. Ensure all their documented standards and patterns are applied meticulously.
+
 ---
 
 _Note for AI Assistants: These instructions must be implicitly applied to every task performed in this repository. Never ignore lint warnings, always format your code, verify type safety, write tests, and update documentation as required._

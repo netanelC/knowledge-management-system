@@ -5,6 +5,7 @@ import pinoHttp from 'pino-http';
 import { logger } from './utils/logger';
 import { AppError } from './utils/error';
 import healthRouter from './components/health/api';
+import assetsRouter from './components/assets/api';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use(pinoHttp({ logger }));
 
 app.use('/api/health', healthRouter);
+app.use('/api/assets', assetsRouter);
 
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   logger.error(err);
