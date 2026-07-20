@@ -3,15 +3,19 @@
 ## 1. Domain Entities
 
 ### `Asset`
+
 Represents an uploaded file in the knowledge system.
-- `id`: string (UUID) - *Also serves as the S3 object key*
+
+- `id`: string (UUID) - _Also serves as the S3 object key_
 - `filename`: string (Original name)
 - `type`: enum (`IMAGE`, `DOCUMENT`) - Useful for the frontend to know whether to render an `<img>` tag or a text viewer.
 - `extractedText`: string (Optional - content of the text file) - Needed for text files because the assignment requires searching for documents that "include the text". We must store the raw text to perform exact text matching during a search.
 - `createdAt`: Date
 
 ### `AssetMetadata` (1-to-1 with Asset)
+
 AI-generated metadata to power the smart search.
+
 - `assetId`: string (Primary Key & Foreign Key)
 - `description`: string (AI-generated summary/description)
 - `keywords`: string[] (AI-generated tags for searchability)
@@ -40,4 +44,5 @@ AI-generated metadata to power the smart search.
 - **Tooling**: ESLint, Prettier, GitHub Actions (CI).
 
 ## 4. Deployment Strategy
+
 A multi-stage `Dockerfile` that builds the React frontend, builds the Express backend, and serves the static frontend files from the Express server. This allows for a simple 1-container deployment.

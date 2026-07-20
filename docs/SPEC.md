@@ -50,4 +50,5 @@ A fullstack web application using React (Vite) and Node.js (Express) within a Tu
 - Editing or deleting uploaded assets (immutable append-only system).
 
 ## Further Notes
+
 - Since this is a home assignment, simplicity and clear engineering approaches are prioritized over raw production readiness.

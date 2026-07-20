@@ -1,0 +1,23 @@
+{
+  "name": "knowledge-management-system",
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.0.9",
+  "description": "Knowledge Management System",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "format": "prettier -c .",
+    "format:fix": "prettier --write .",
+    "prelint": "pnpm run format",
+    "prelint:fix": "pnpm run format:fix",
+    "lint:fix": "turbo run lint:fix"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.5",
+    "turbo": "^2.10.5",
+    "typescript": "catalog:"
+  }
+}
