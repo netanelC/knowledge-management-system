@@ -3,11 +3,14 @@ import request from 'supertest';
 import app from '../../index';
 
 vi.mock('@aws-sdk/client-s3', () => {
+  const S3ClientMock = vi.fn().mockImplementation(() => ({
+    send: vi.fn().mockResolvedValue({}),
+  }));
+  const PutObjectCommandMock = vi.fn();
+
   return {
-    S3Client: vi.fn().mockImplementation(() => ({
-      send: vi.fn().mockResolvedValue({}),
-    })),
-    PutObjectCommand: vi.fn(),
+    S3Client: S3ClientMock,
+    PutObjectCommand: PutObjectCommandMock,
   };
 });
 

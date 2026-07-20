@@ -42,3 +42,12 @@ Run integration tests using Vitest:
 ```bash
 pnpm run test
 ```
+
+### AWS S3 Integration
+
+Set the following environment variables to configure AWS S3 storage:
+
+- `AWS_REGION`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_BUCKET`
