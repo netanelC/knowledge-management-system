@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [ "master", "main" ]
+    branches: ['master', 'main']
 
 jobs:
   lint:
@@ -45,7 +45,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/knowledge_management_system?schema=public"
+      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/knowledge_management_system?schema=public'
 
     steps:
       - name: Checkout repository
