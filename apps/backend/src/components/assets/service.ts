@@ -1,17 +1,43 @@
 import { AssetUploadResponse } from 'types';
 import { AppError } from '../../utils/error';
+import { prisma } from '../../utils/prisma';
 
-export const handleAssetUpload = (file: Express.Multer.File | undefined): AssetUploadResponse => {
+export interface AssetUploadInput {
+  originalname: string;
+  mimetype: string;
+  buffer: Buffer;
+}
+
+const validateTextFile = (file: AssetUploadInput) => {
+  const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
+  if (!isText) {
+    throw new AppError('Invalid file type. Only text files are allowed.', 400);
+  }
+};
+
+export const handleAssetUpload = async (
+  file: AssetUploadInput | undefined,
+): Promise<AssetUploadResponse> => {
   if (!file) {
     throw new AppError('No file uploaded', 400);
   }
 
+  validateTextFile(file);
+
+  const asset = await prisma.asset.create({
+    data: {
+      filename: file.originalname,
+      s3Key: null,
+    },
+  });
+
   return {
     message: 'File uploaded successfully',
     asset: {
-      originalName: file.originalname,
-      size: file.size,
-      mimeType: file.mimetype,
+      id: asset.id,
+      filename: asset.filename,
+      s3Key: asset.s3Key,
+      createdAt: asset.createdAt.toISOString(),
     },
   };
 };

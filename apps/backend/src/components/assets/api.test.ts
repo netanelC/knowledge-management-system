@@ -2,22 +2,34 @@ import { describe, it, expect } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
 
+const createMockTextFile = () => ({
+  content: 'fake content ' + Math.random().toString(),
+  filename: 'mockfile_' + Date.now() + '.txt',
+});
+
 describe('Assets API', () => {
   describe('POST /api/assets', () => {
     it('should upload a file and return metadata', async () => {
       // Arrange
-      const buffer = Buffer.from('hello world');
+      const mockFile = createMockTextFile();
+      const buffer = Buffer.from(mockFile.content);
 
       // Act
-      const response = await request(app).post('/api/assets').attach('file', buffer, 'test.txt');
+      const response = await request(app)
+        .post('/api/assets')
+        .attach('file', buffer, mockFile.filename);
 
       // Assert
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty('message', 'File uploaded successfully');
       expect(response.body).toHaveProperty('asset');
-      expect(response.body.asset).toHaveProperty('originalName', 'test.txt');
-      expect(response.body.asset).toHaveProperty('size', buffer.length);
-      expect(response.body.asset).toHaveProperty('mimeType', 'text/plain');
+
+      const asset = response.body.asset;
+      expect(asset).toHaveProperty('id');
+      expect(typeof asset.id).toBe('string');
+      expect(asset).toHaveProperty('filename', mockFile.filename);
+      expect(asset).toHaveProperty('s3Key', null);
+      expect(asset).toHaveProperty('createdAt');
     });
 
     it('should return 400 if no file is uploaded', async () => {
