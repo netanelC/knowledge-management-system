@@ -81,6 +81,9 @@ export function UploadForm() {
       {uploadResponse && (
         <div className="alert success">
           <p className="alert-title">Upload Successful!</p>
+          <p className="alert-body">
+            Database UUID: <strong>{uploadResponse.asset.id}</strong>
+          </p>
           <pre className="json-view">{JSON.stringify(uploadResponse, null, 2)}</pre>
         </div>
       )}
