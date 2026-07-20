@@ -1,0 +1,12 @@
+generator client {
+  provider   = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Temporary model to satisfy Prisma generate. Domain models belong in later tickets.
+model Dummy {
+  id Int @id @default(autoincrement())
+}

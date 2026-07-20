@@ -1,0 +1,13 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+catalog:
+  eslint: '^10.7.0'
+  supertest: '^7.2.2'
+  typescript: '^7.0.2'
+  typescript-eslint: '^8.65.0'
+  vitest: '^3.2.7'
+  '@eslint/js': '^10.0.1'
+  '@types/node': '^26.1.1'
+  '@types/supertest': '^6.0.3'
