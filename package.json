@@ -16,6 +16,7 @@
     "lint:fix": "turbo run lint:fix"
   },
   "devDependencies": {
+    "prettier": "^3.9.5",
     "turbo": "^2.10.5",
     "typescript": "catalog:"
   }

@@ -9,7 +9,7 @@ This document outlines the coding standards and quality requirements for this re
 ## 2. Code Quality & Formatting
 
 - **Don't Repeat Yourself (DRY):** Avoid duplicated code. Extract shared logic into reusable functions, hooks, or components.
-- **Use Shared Packages:** Whenever code, types, or utilities are useful across multiple applications (e.g., between frontend and backend), extract and use them from a shared Turborepo package (like `@kms/types`).
+- **Use Shared Packages:** Whenever code, types, or utilities are useful across multiple applications (e.g., between frontend and backend), extract and use them from a shared Turborepo package (like `types`).
 - **No Lint Errors:** Resolve all lint errors and warnings. Using `eslint-disable` or equivalent suppression comments is strictly prohibited unless explicitly authorized.
 - **Code Formatting:** The codebase must be formatted using Prettier. Always run the formatter before finalizing a feature to maintain consistent styling.
 - **TypeScript Errors:** Resolve all TypeScript compiler errors. Do not bypass the compiler using `@ts-ignore` or `any` typing as a shortcut.
