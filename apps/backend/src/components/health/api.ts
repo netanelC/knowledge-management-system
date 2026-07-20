@@ -18,7 +18,12 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     };
     res.json(response);
   } catch (_error) {
-    next(new AppError('Database connection failed', 500));
+    const response: HealthResponse = {
+      status: 'error',
+      database: 'disconnected',
+      time: timestamp,
+    };
+    res.status(503).json(response);
   }
 });
 
