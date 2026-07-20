@@ -6,3 +6,12 @@ export interface HealthResponse {
   time: ISODateString;
   dbPingResult?: number;
 }
+
+export interface AssetUploadResponse {
+  message: string;
+  asset: {
+    originalName: string;
+    size: number;
+    mimeType: string;
+  };
+}
