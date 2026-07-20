@@ -1,6 +1,15 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
+
+vi.mock('@aws-sdk/client-s3', () => {
+  return {
+    S3Client: vi.fn().mockImplementation(() => ({
+      send: vi.fn().mockResolvedValue({}),
+    })),
+    PutObjectCommand: vi.fn(),
+  };
+});
 
 const createMockTextFile = () => ({
   content: 'fake content ' + Math.random().toString(),
@@ -8,6 +17,10 @@ const createMockTextFile = () => ({
 });
 
 describe('Assets API', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   describe('POST /api/assets', () => {
     it('should upload a file and return metadata', async () => {
       // Arrange
@@ -28,7 +41,7 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('id');
       expect(typeof asset.id).toBe('string');
       expect(asset).toHaveProperty('filename', mockFile.filename);
-      expect(asset).toHaveProperty('s3Key', null);
+      expect(asset).toHaveProperty('s3Key', asset.id);
       expect(asset).toHaveProperty('createdAt');
     });
 
