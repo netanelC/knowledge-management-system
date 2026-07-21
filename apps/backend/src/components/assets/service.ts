@@ -30,10 +30,13 @@ export const handleAssetUpload = async (
 
   const { isImage } = validateAssetFile(file);
 
+  const extractedText = !isImage ? file.buffer.toString('utf-8') : null;
+
   const asset = await prisma.asset.create({
     data: {
       filename: file.originalname,
       type: isImage ? 'IMAGE' : 'DOCUMENT',
+      extractedText,
     },
   });
 
@@ -62,6 +65,7 @@ export const handleAssetUpload = async (
       id: asset.id,
       filename: asset.filename,
       type: asset.type,
+      extractedText: asset.extractedText,
       createdAt: asset.createdAt.toISOString(),
     },
   };
@@ -76,6 +80,7 @@ export const getAllAssets = async (): Promise<Asset[]> => {
     id: asset.id,
     filename: asset.filename,
     type: asset.type,
+    extractedText: asset.extractedText,
     createdAt: asset.createdAt.toISOString(),
   }));
 };

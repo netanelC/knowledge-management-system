@@ -15,5 +15,6 @@ model Asset {
   id            String    @id @default(uuid())
   filename      String
   type          AssetType @default(DOCUMENT)
+  extractedText String?
   createdAt     DateTime  @default(now())
 }

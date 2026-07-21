@@ -64,6 +64,7 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('filename', mockFile.filename);
       expect(asset).toHaveProperty('createdAt');
       expect(asset).toHaveProperty('type', 'DOCUMENT');
+      expect(asset).toHaveProperty('extractedText', mockFile.content);
     });
 
     it('should upload an image and set type to IMAGE', async () => {
@@ -80,6 +81,7 @@ describe('Assets API', () => {
       expect(response.status).toBe(201);
       const asset = response.body.asset;
       expect(asset).toHaveProperty('type', 'IMAGE');
+      expect(asset).toHaveProperty('extractedText', null);
     });
 
     it('should return 400 if no file is uploaded', async () => {

@@ -18,3 +18,9 @@
 
 - Created an `AssetType` enum in Prisma (`DOCUMENT`, `IMAGE`) to persist the mime-type categorization.
 - Created `GET /api/assets/:id/download` endpoint to proxy the S3 asset stream through the backend. This avoids the need for presigned URLs or complex bucket policies while allowing the frontend to easily fetch the image thumbnail using standard `<img>` tags.
+
+## Ticket 07 - Text Document Extraction
+
+- Added `extractedText` field to `Asset` model in Prisma.
+- Backend converts the uploaded text file buffer to a string in `service.ts` if the file is a document, and persists it in the `extractedText` column upon creation.
+- Used `Buffer.toString('utf-8')` to decode the text since `file.buffer` is available via `multer` memory storage.
