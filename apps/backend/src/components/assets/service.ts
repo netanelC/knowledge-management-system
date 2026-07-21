@@ -1,4 +1,4 @@
-import { AssetUploadResponse } from 'types';
+import { AssetUploadResponse, Asset } from 'types';
 import { AppError } from '../../utils/error';
 import { prisma } from '../../utils/prisma';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
@@ -60,4 +60,16 @@ export const handleAssetUpload = async (
       createdAt: asset.createdAt.toISOString(),
     },
   };
+};
+
+export const getAllAssets = async (): Promise<Asset[]> => {
+  const assets = await prisma.asset.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return assets.map((asset) => ({
+    id: asset.id,
+    filename: asset.filename,
+    createdAt: asset.createdAt.toISOString(),
+  }));
 };

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
+import { prisma } from '../../utils/prisma';
 
 vi.mock('@aws-sdk/client-s3', () => {
   const S3ClientMock = vi.fn().mockImplementation(() => ({
@@ -20,8 +21,9 @@ const createMockTextFile = () => ({
 });
 
 describe('Assets API', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
+    await prisma.asset.deleteMany();
   });
 
   describe('POST /api/assets', () => {
@@ -47,14 +49,33 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('createdAt');
     });
 
-    it('should return 400 if no file is uploaded', async () => {
-      // Arrange
+    it('should return 400 when no file is provided', async () => {
       // Act
       const response = await request(app).post('/api/assets');
 
       // Assert
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'No file uploaded');
+    });
+  });
+
+  describe('GET /api/assets', () => {
+    it('should return a list of assets', async () => {
+      // Arrange
+      await prisma.asset.createMany({
+        data: [{ filename: 'test1.txt' }, { filename: 'test2.txt' }],
+      });
+
+      // Act
+      const response = await request(app).get('/api/assets');
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(2);
+      expect(response.body[0]).toHaveProperty('filename');
+      expect(response.body[0]).toHaveProperty('id');
+      expect(response.body[0]).toHaveProperty('createdAt');
     });
   });
 });

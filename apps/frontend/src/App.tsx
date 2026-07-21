@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { HealthResponse } from 'types';
 import { UploadForm } from './UploadForm';
+import { AssetList } from './AssetList';
 
 function App() {
   const [status, setStatus] = useState<HealthResponse | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     fetch('/api/health')
@@ -30,7 +32,10 @@ function App() {
         )}
       </header>
 
-      <UploadForm />
+      <div className="layout-grid">
+        <UploadForm onUploadSuccess={() => setRefreshKey((k) => k + 1)} />
+        <AssetList refreshKey={refreshKey} />
+      </div>
     </div>
   );
 }

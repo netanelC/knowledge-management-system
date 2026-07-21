@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import { handleAssetUpload } from './service';
+import { handleAssetUpload, getAllAssets } from './service';
 
 const router = Router();
 
@@ -14,6 +14,15 @@ router.post('/', upload.single('file'), async (req: Request, res: Response, next
   try {
     const response = await handleAssetUpload(req.file);
     res.status(201).json(response);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const assets = await getAllAssets();
+    res.json(assets);
   } catch (error) {
     next(error);
   }

@@ -2,7 +2,11 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { AssetUploadResponse } from 'types';
 
-export function UploadForm() {
+interface UploadFormProps {
+  onUploadSuccess?: () => void;
+}
+
+export function UploadForm({ onUploadSuccess }: UploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadResponse, setUploadResponse] = useState<AssetUploadResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +41,9 @@ export function UploadForm() {
 
       const data: AssetUploadResponse = await res.json();
       setUploadResponse(data);
+      if (onUploadSuccess) {
+        onUploadSuccess();
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during upload');
     } finally {
