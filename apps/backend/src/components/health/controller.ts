@@ -4,8 +4,8 @@ import { pingDatabase } from './model';
 
 export const healthCheckController = async (req: Request, res: Response, next: NextFunction) => {
   const timestamp = new Date().toISOString();
-  let status: 'ok' | 'error' = 'ok';
-  let database: 'connected' | 'disconnected' = 'connected';
+  let status: HealthResponse['status'] = 'ok';
+  let database: HealthResponse['database'] = 'connected';
   let dbPingResult;
 
   try {

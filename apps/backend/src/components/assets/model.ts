@@ -1,4 +1,3 @@
-
 import { createAssetInDb } from './dal';
 
 export interface AssetRecord {
@@ -22,9 +21,7 @@ export const toAssetDTO = (asset: AssetRecord) => ({
   createdAt: asset.createdAt.toISOString(),
 });
 
-export const createAssetRecord = async (
-  input: CreateAssetInput,
-) => {
+export const createAssetRecord = async (input: CreateAssetInput) => {
   const asset = await createAssetInDb(input.filename, input.size);
 
   return toAssetDTO(asset);

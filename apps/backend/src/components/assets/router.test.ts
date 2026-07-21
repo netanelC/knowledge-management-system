@@ -21,7 +21,7 @@ describe('Assets API', () => {
 
       // Assert
       expect(response.status).toBe(201);
-      
+
       const asset = response.body;
       expect(asset).toHaveProperty('id');
       expect(typeof asset.id).toBe('string');
