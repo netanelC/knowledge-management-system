@@ -1,24 +1,14 @@
 import { AssetUploadResponse } from 'types';
 import { AppError } from '../../utils/error';
 import { prisma } from '../../utils/prisma';
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import config from 'config';
-import { Readable } from 'stream';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { s3Client, bucketName } from '../../utils/s3';
 
 export interface AssetUploadInput {
   originalname: string;
   mimetype: string;
   buffer: Buffer;
 }
-
-const s3Client = new S3Client({
-  region: config.get<string>('s3.region'),
-  credentials: {
-    accessKeyId: config.get<string>('s3.accessKeyId'),
-    secretAccessKey: config.get<string>('s3.secretAccessKey'),
-  },
-});
-const bucketName = config.get<string>('s3.bucket');
 
 const validateTextFile = (file: AssetUploadInput) => {
   const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
@@ -43,11 +33,10 @@ export const handleAssetUpload = async (
   });
 
   try {
-    const stream = Readable.from(file.buffer);
     const command = new PutObjectCommand({
       Bucket: bucketName,
       Key: asset.id,
-      Body: stream,
+      Body: file.buffer,
       ContentType: file.mimetype,
     });
     await s3Client.send(command);

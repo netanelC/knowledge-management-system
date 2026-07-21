@@ -20,7 +20,7 @@ function App() {
           <div className="health-status">
             <span className={`status-dot ${status.status === 'ok' ? 'ok' : 'error'}`}></span>
             <span>
-              API: {status.status} | DB: {status.database}
+              API: {status.status} | DB: {status.database} | S3: {status.s3}
             </span>
           </div>
         ) : (
