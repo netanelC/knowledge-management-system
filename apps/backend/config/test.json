@@ -2,12 +2,7 @@
   "database": {
     "url": "postgresql://postgres:postgres@localhost:5432/knowledge_management_system_test?schema=public"
   },
-  "aws": {
-    "s3": {
-      "region": "us-east-1",
-      "bucket": "ksm-test",
-      "accessKeyId": "minioadmin",
-      "secretAccessKey": "minioadmin"
-    }
+  "s3": {
+    "bucket": "ksm-test"
   }
 }
