@@ -11,7 +11,6 @@ export interface Asset {
   id: string;
   filename: string;
   type: 'DOCUMENT' | 'IMAGE';
-  extractedText: string | null;
   createdAt: ISODateString;
 }
 

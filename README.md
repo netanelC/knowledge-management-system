@@ -44,7 +44,7 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
 ## API Endpoints
 
 - `GET /api/health` - Health check endpoint for API, Database, and S3.
-- `POST /api/assets` - Upload a text or image file to S3 and save metadata in the database.
+- `POST /api/assets` - Upload a text or image file to S3 and save metadata in the database. Text content is automatically extracted and persisted.
 - `GET /api/assets` - Retrieve all uploaded asset metadata.
 - `GET /api/assets/:id/download` - Stream an asset from S3 directly to the client.
 

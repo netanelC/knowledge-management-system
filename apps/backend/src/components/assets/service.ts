@@ -12,6 +12,13 @@ export interface AssetUploadInput {
   buffer: Buffer;
 }
 
+const mapAsset = (asset: any): Asset => ({
+  id: asset.id,
+  filename: asset.filename,
+  type: asset.type,
+  createdAt: asset.createdAt.toISOString(),
+});
+
 const validateAssetFile = (file: AssetUploadInput) => {
   const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
   const isImage = file.mimetype.startsWith('image/');
@@ -61,13 +68,7 @@ export const handleAssetUpload = async (
 
   return {
     message: 'File uploaded successfully',
-    asset: {
-      id: asset.id,
-      filename: asset.filename,
-      type: asset.type,
-      extractedText: asset.extractedText,
-      createdAt: asset.createdAt.toISOString(),
-    },
+    asset: mapAsset(asset),
   };
 };
 
@@ -76,13 +77,7 @@ export const getAllAssets = async (): Promise<Asset[]> => {
     orderBy: { createdAt: 'desc' },
   });
 
-  return assets.map((asset) => ({
-    id: asset.id,
-    filename: asset.filename,
-    type: asset.type,
-    extractedText: asset.extractedText,
-    createdAt: asset.createdAt.toISOString(),
-  }));
+  return assets.map(mapAsset);
 };
 
 export const getAssetFile = async (
