@@ -4,6 +4,7 @@ import { prisma } from '../../utils/prisma';
 import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, bucketName } from '../../utils/s3';
 import { Readable } from 'stream';
+import sharp from 'sharp';
 
 export interface AssetUploadInput {
   originalname: string;
@@ -17,6 +18,7 @@ const validateAssetFile = (file: AssetUploadInput) => {
   if (!isText && !isImage) {
     throw new AppError('Invalid file type. Only text and image files are allowed.', 400);
   }
+  return { isImage };
 };
 
 export const handleAssetUpload = async (
@@ -26,9 +28,7 @@ export const handleAssetUpload = async (
     throw new AppError('No file uploaded', 400);
   }
 
-  validateAssetFile(file);
-
-  const isImage = file.mimetype.startsWith('image/');
+  const { isImage } = validateAssetFile(file);
 
   const asset = await prisma.asset.create({
     data: {
@@ -95,13 +95,23 @@ export const getAssetFile = async (
     });
     const response = await s3Client.send(command);
     if (!response.Body) {
-      throw new Error('S3 response body is empty');
+      throw new AppError('S3 response body is empty', 502);
     }
+
+    if (asset.type === 'IMAGE') {
+      const transform = sharp().resize(150, 150, { fit: 'cover' });
+      return {
+        stream: (response.Body as Readable).pipe(transform),
+        contentType: response.ContentType || 'image/jpeg',
+      };
+    }
+
     return {
       stream: response.Body as Readable,
       contentType: response.ContentType || 'application/octet-stream',
     };
   } catch (error) {
+    if (error instanceof AppError) throw error;
     throw new AppError('Failed to fetch asset from storage', 502);
   }
 };

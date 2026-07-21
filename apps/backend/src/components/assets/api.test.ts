@@ -3,8 +3,6 @@ import request from 'supertest';
 import app from '../../index';
 import { prisma } from '../../utils/prisma';
 
-import { Readable } from 'stream';
-
 vi.mock('@aws-sdk/client-s3', () => {
   const S3ClientMock = vi.fn().mockImplementation(() => ({
     send: vi.fn().mockResolvedValue({
@@ -31,6 +29,12 @@ const createMockImageFile = () => ({
   content: 'fake image data ' + Math.random().toString(),
   filename: 'mockimage_' + Date.now() + '.png',
   mimetype: 'image/png',
+});
+
+const buildAssetRecord = (overrides = {}) => ({
+  filename: 'mockfile_' + Date.now() + '.txt',
+  type: 'DOCUMENT' as const,
+  ...overrides,
 });
 
 describe('Assets API', () => {
@@ -95,10 +99,8 @@ describe('Assets API', () => {
 
     it('should return a list of assets', async () => {
       // Arrange
-      const file1 = createMockTextFile();
-      const file2 = createMockTextFile();
       await prisma.asset.createMany({
-        data: [{ filename: file1.filename }, { filename: file2.filename }],
+        data: [buildAssetRecord(), buildAssetRecord()],
       });
 
       // Act
@@ -118,9 +120,9 @@ describe('Assets API', () => {
   describe('GET /api/assets/:id/download', () => {
     it('should download an asset', async () => {
       // Arrange
-      const mockFile = createMockTextFile();
+      const assetRecord = buildAssetRecord();
       const asset = await prisma.asset.create({
-        data: { filename: mockFile.filename, type: 'DOCUMENT' },
+        data: assetRecord,
       });
 
       // Act
