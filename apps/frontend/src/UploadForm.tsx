@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import type { Asset } from 'backend/src/types';
+import type { Asset } from '../../backend/src/types';
 
 export const UploadForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
