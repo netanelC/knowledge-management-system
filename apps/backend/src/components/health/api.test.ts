@@ -24,6 +24,5 @@ describe('Health API', () => {
     expect(response.body).toHaveProperty('database', 'connected');
     expect(response.body).toHaveProperty('s3', 'connected');
     expect(response.body).toHaveProperty('time');
-    expect(response.body).toHaveProperty('dbPingResult', 1);
   });
 });

@@ -5,7 +5,6 @@ export interface HealthResponse {
   database: 'connected' | 'disconnected';
   s3: 'connected' | 'disconnected';
   time: ISODateString;
-  dbPingResult?: number;
 }
 
 export interface Asset {

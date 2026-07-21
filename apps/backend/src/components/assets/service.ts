@@ -44,7 +44,11 @@ export const handleAssetUpload = async (
     });
     await s3Client.send(command);
   } catch (error) {
-    await prisma.asset.delete({ where: { id: asset.id } });
+    try {
+      await prisma.asset.delete({ where: { id: asset.id } });
+    } catch (rollbackError) {
+      // Log rollback failure in a real app, but still throw the original error
+    }
     throw new AppError('Failed to upload file to storage', 502);
   }
 

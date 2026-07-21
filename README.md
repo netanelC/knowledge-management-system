@@ -17,10 +17,21 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
    ```
 
 2. Environment Variables:
-   Create a `.env` file in `apps/backend/` and configure your database URL:
+   Create a `.env` file in `apps/backend/` and configure your database and S3 settings:
 
    ```env
    DATABASE_URL="postgresql://user:password@localhost:5432/kms?schema=public"
+   PORT=3000
+
+   # S3 Configuration
+   AWS_REGION="us-east-1"
+   AWS_ACCESS_KEY_ID="your-access-key"
+   AWS_SECRET_ACCESS_KEY="your-secret-key"
+   AWS_S3_BUCKET="your-bucket-name"
+
+   # Optional: For local development with MinIO or LocalStack
+   AWS_ENDPOINT_URL="http://localhost:9000"
+   AWS_S3_FORCE_PATH_STYLE="true"
    ```
 
 3. Database Initialization:
