@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, HeadBucketCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import config from 'config';
 
@@ -12,12 +12,20 @@ const getS3Client = () => {
         accessKeyId: config.get<string>('aws.s3.accessKeyId'),
         secretAccessKey: config.get<string>('aws.s3.secretAccessKey'),
       },
+      endpoint: config.has('aws.s3.endpoint') ? config.get<string>('aws.s3.endpoint') : undefined,
+      forcePathStyle: config.has('aws.s3.forcePathStyle')
+        ? config.get<boolean>('aws.s3.forcePathStyle')
+        : false,
     });
   }
   return s3Client;
 };
 
-export const uploadFile = async (key: string, body: Buffer | Readable): Promise<void> => {
+export const uploadFile = async (
+  key: string,
+  body: Buffer | Readable,
+  contentLength?: number,
+): Promise<void> => {
   const bucket = config.get<string>('aws.s3.bucket');
   const client = getS3Client();
 
@@ -25,7 +33,19 @@ export const uploadFile = async (key: string, body: Buffer | Readable): Promise<
     Bucket: bucket,
     Key: key,
     Body: body,
+    ...(contentLength !== undefined ? { ContentLength: contentLength } : {}),
   });
 
   await client.send(command);
+};
+
+export const pingStorage = async (): Promise<boolean> => {
+  try {
+    const bucket = config.get<string>('aws.s3.bucket');
+    const client = getS3Client();
+    await client.send(new HeadBucketCommand({ Bucket: bucket }));
+    return true;
+  } catch (_error) {
+    return false;
+  }
 };

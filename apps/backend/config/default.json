@@ -6,9 +6,11 @@
   "aws": {
     "s3": {
       "region": "us-east-1",
-      "bucket": "local-bucket",
-      "accessKeyId": "dummy",
-      "secretAccessKey": "dummy"
+      "bucket": "knowledge-management-system",
+      "accessKeyId": "minioadmin",
+      "secretAccessKey": "minioadmin",
+      "endpoint": "http://localhost:9000",
+      "forcePathStyle": true
     }
   }
 }

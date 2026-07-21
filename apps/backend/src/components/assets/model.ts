@@ -14,7 +14,7 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
   const fileStream = Readable.from(input.buffer);
 
   // Upload to S3 first to ensure we don't strand DB records on failure
-  await uploadFile(id, fileStream);
+  await uploadFile(id, fileStream, input.size);
 
   // Once S3 upload succeeds, create the database record
   return await createAssetInDb(id, input.filename, input.size);
