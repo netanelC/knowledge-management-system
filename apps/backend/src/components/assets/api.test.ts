@@ -44,7 +44,6 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('id');
       expect(typeof asset.id).toBe('string');
       expect(asset).toHaveProperty('filename', mockFile.filename);
-      expect(asset).toHaveProperty('s3Key', asset.id);
       expect(asset).toHaveProperty('createdAt');
     });
 

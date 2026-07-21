@@ -9,6 +9,5 @@ datasource db {
 model Asset {
   id            String   @id @default(uuid())
   filename      String
-  s3Key         String?
   createdAt     DateTime @default(now())
 }

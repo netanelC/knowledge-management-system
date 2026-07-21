@@ -7,12 +7,13 @@ export interface HealthResponse {
   dbPingResult?: number;
 }
 
+export interface Asset {
+  id: string;
+  filename: string;
+  createdAt: ISODateString;
+}
+
 export interface AssetUploadResponse {
   message: string;
-  asset: {
-    id: string;
-    filename: string;
-    s3Key: string | null;
-    createdAt: ISODateString;
-  };
+  asset: Asset;
 }

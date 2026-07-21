@@ -2,12 +2,10 @@
   "database": {
     "url": "postgresql://postgres:postgres@localhost:5432/knowledge_management_system"
   },
-  "aws": {
-    "s3": {
-      "region": "us-east-1",
-      "accessKeyId": "test-key",
-      "secretAccessKey": "test-secret",
-      "bucket": "test-bucket"
-    }
+  "s3": {
+    "region": "us-east-1",
+    "accessKeyId": "test-key",
+    "secretAccessKey": "test-secret",
+    "bucket": "test-bucket"
   }
 }

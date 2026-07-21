@@ -3,12 +3,10 @@
   "database": {
     "url": ""
   },
-  "aws": {
-    "s3": {
-      "region": "us-east-1",
-      "accessKeyId": "",
-      "secretAccessKey": "",
-      "bucket": "my-local-bucket"
-    }
+  "s3": {
+    "region": "us-east-1",
+    "accessKeyId": "",
+    "secretAccessKey": "",
+    "bucket": "my-local-bucket"
   }
 }

@@ -12,13 +12,13 @@ export interface AssetUploadInput {
 }
 
 const s3Client = new S3Client({
-  region: config.get<string>('aws.s3.region'),
+  region: config.get<string>('s3.region'),
   credentials: {
-    accessKeyId: config.get<string>('aws.s3.accessKeyId'),
-    secretAccessKey: config.get<string>('aws.s3.secretAccessKey'),
+    accessKeyId: config.get<string>('s3.accessKeyId'),
+    secretAccessKey: config.get<string>('s3.secretAccessKey'),
   },
 });
-const bucketName = config.get<string>('aws.s3.bucket');
+const bucketName = config.get<string>('s3.bucket');
 
 const validateTextFile = (file: AssetUploadInput) => {
   const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
@@ -39,7 +39,6 @@ export const handleAssetUpload = async (
   const asset = await prisma.asset.create({
     data: {
       filename: file.originalname,
-      s3Key: null,
     },
   });
 
@@ -52,11 +51,6 @@ export const handleAssetUpload = async (
       ContentType: file.mimetype,
     });
     await s3Client.send(command);
-
-    await prisma.asset.update({
-      where: { id: asset.id },
-      data: { s3Key: asset.id },
-    });
   } catch (error) {
     await prisma.asset.delete({ where: { id: asset.id } });
     throw new AppError('Failed to upload file to storage', 502);
@@ -67,7 +61,6 @@ export const handleAssetUpload = async (
     asset: {
       id: asset.id,
       filename: asset.filename,
-      s3Key: asset.id,
       createdAt: asset.createdAt.toISOString(),
     },
   };
