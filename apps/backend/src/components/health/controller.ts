@@ -4,22 +4,23 @@ import { pingDatabase } from './model';
 
 export const healthCheckController = async (req: Request, res: Response, next: NextFunction) => {
   const timestamp = new Date().toISOString();
-  try {
-    const dbPingResult = await pingDatabase();
+  let status: 'ok' | 'error' = 'ok';
+  let database: 'connected' | 'disconnected' = 'connected';
+  let dbPingResult;
 
-    const response: HealthResponse = {
-      status: 'ok',
-      database: 'connected',
-      time: timestamp,
-      dbPingResult,
-    };
-    res.json(response);
+  try {
+    dbPingResult = await pingDatabase();
   } catch (_error) {
-    const response: HealthResponse = {
-      status: 'error',
-      database: 'disconnected',
-      time: timestamp,
-    };
-    res.status(503).json(response);
+    status = 'error';
+    database = 'disconnected';
   }
+
+  const response: HealthResponse = {
+    status,
+    database,
+    time: timestamp,
+    ...(dbPingResult ? { dbPingResult } : {}),
+  };
+
+  res.status(status === 'ok' ? 200 : 503).json(response);
 };

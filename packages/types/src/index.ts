@@ -8,11 +8,9 @@ export interface HealthResponse {
 }
 
 export interface AssetUploadResponse {
-  message: string;
-  asset: {
-    id: string;
-    filename: string;
-    s3Key: string | null;
-    createdAt: ISODateString;
-  };
+  id: string;
+  filename: string;
+  s3Key: string | null;
+  size: number;
+  createdAt: ISODateString;
 }

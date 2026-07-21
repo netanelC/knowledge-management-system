@@ -10,5 +10,6 @@ model Asset {
   id            String   @id @default(uuid())
   filename      String
   s3Key         String?
+  size          Int
   createdAt     DateTime @default(now())
 }
