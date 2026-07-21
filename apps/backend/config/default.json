@@ -3,12 +3,12 @@
   "database": {
     "url": "postgresql://postgres:postgres@localhost:5432/knowledge_management_system?schema=public"
   },
-  "s3": {
-    "region": "us-east-1",
-    "bucket": "knowledge-management-system",
-    "accessKeyId": "minioadmin",
-    "secretAccessKey": "minioadmin",
-    "endpoint": "http://localhost:9000",
-    "forcePathStyle": true
+  "aws": {
+    "s3": {
+      "region": "us-east-1",
+      "bucket": "knowledge-management-system",
+      "endpoint": "http://localhost:9000",
+      "forcePathStyle": true
+    }
   }
 }

@@ -1,21 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
-import { pingStorage } from './model';
-
-vi.mock('./model', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./model')>();
-  return {
-    ...actual,
-    pingStorage: vi.fn(),
-  };
-});
+import * as model from './model';
 
 describe('Health API', () => {
   it('GET /api/health should return ok status, database connected, and storage connected', async () => {
-    // Arrange
-    vi.mocked(pingStorage).mockResolvedValue(true);
-
     // Act
     const response = await request(app).get('/api/health');
 
@@ -30,7 +19,7 @@ describe('Health API', () => {
 
   it('GET /api/health should return error status and storage disconnected when S3 is down', async () => {
     // Arrange
-    vi.mocked(pingStorage).mockResolvedValue(false);
+    const spy = vi.spyOn(model, 'pingStorage').mockResolvedValue(false);
 
     // Act
     const response = await request(app).get('/api/health');
@@ -42,5 +31,7 @@ describe('Health API', () => {
       database: 'connected',
       storage: 'disconnected',
     });
+
+    spy.mockRestore();
   });
 });

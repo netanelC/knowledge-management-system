@@ -10,9 +10,8 @@ export const healthCheckController = async (
   let database: HealthResponse['database'] = 'connected';
   let storage: HealthResponse['storage'] = 'connected';
 
-  try {
-    await pingDatabase();
-  } catch (_error) {
+  const dbIsHealthy = await pingDatabase();
+  if (!dbIsHealthy) {
     status = 'error';
     database = 'disconnected';
   }
