@@ -21,14 +21,12 @@ describe('Assets API', () => {
 
       // Assert
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('message', 'File uploaded successfully');
-      expect(response.body).toHaveProperty('asset');
 
-      const asset = response.body.asset;
+      const asset = response.body;
       expect(asset).toHaveProperty('id');
       expect(typeof asset.id).toBe('string');
       expect(asset).toHaveProperty('filename', mockFile.filename);
-      expect(asset).toHaveProperty('s3Key', null);
+      expect(asset).toHaveProperty('size');
       expect(asset).toHaveProperty('createdAt');
     });
 

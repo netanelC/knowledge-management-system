@@ -16,12 +16,9 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
    pnpm install
    ```
 
-2. Environment Variables:
-   Create a `.env` file in `apps/backend/` and configure your database URL:
-
-   ```env
-   DATABASE_URL="postgresql://user:password@localhost:5432/kms?schema=public"
-   ```
+2. Environment Variables & Configuration:
+   The application uses the `config` npm package for configuration. Instead of a `.env` file, database connections and settings are stored in `apps/backend/config/default.json` and `test.json`.
+   Prisma is configured to dynamically read these settings via `prisma.config.ts`.
 
 3. Database Initialization:
    Generate the Prisma client (and push the schema if needed):
