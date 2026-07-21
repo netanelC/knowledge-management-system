@@ -1,7 +1,7 @@
-import { createAssetInDb, uploadFileToS3, deleteAssetFromDb } from './DAL';
+import { createAssetInDb, uploadFileToS3, deleteAssetFromDb, getAllAssetsFromDb } from './DAL';
 import { CreateAssetInput } from './types';
 import type { Asset } from '@prisma/client';
-import logger from '../../utils/logger';
+import { logger } from '../../utils/logger';
 import { Readable } from 'stream';
 
 export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset> => {
@@ -17,10 +17,17 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
     try {
       await deleteAssetFromDb(asset.id);
     } catch (deleteError) {
-      logger.error(`Failed to clean up stranded DB record for asset ${asset.id}:`, deleteError);
+      logger.error(
+        { error: deleteError },
+        `Failed to clean up stranded DB record for asset ${asset.id}`,
+      );
     }
     throw error;
   }
 
   return asset;
+};
+
+export const getAllAssets = async (): Promise<Asset[]> => {
+  return await getAllAssetsFromDb();
 };

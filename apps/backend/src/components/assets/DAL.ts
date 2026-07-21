@@ -11,6 +11,12 @@ export const createAssetInDb = async (filename: string, size: number) => {
   });
 };
 
+export const getAllAssetsFromDb = async () => {
+  return await prisma.asset.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
+};
+
 export const deleteAssetFromDb = async (id: string) => {
   return await prisma.asset.delete({
     where: { id },

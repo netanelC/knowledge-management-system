@@ -4,8 +4,8 @@
 
 **Blocked by:** 04 — S3 Storage Integration
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Backend exposes `GET /api/assets` returning all Asset records.
-- [ ] Frontend fetches the assets on load.
-- [ ] Frontend renders a list or grid displaying the filenames.
+- [x] Backend exposes `GET /api/assets` returning all Asset records.
+- [x] Frontend fetches the assets on load.
+- [x] Frontend renders a list or grid displaying the filenames.

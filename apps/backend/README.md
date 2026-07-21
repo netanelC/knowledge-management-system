@@ -25,6 +25,12 @@ Available environment variables:
 - `AWS_S3_ENDPOINT`
 - `AWS_S3_FORCE_PATH_STYLE`
 
+## API Endpoints
+
+- `GET /api/health` - Check health status of API, Database, and S3 Storage.
+- `GET /api/assets` - Retrieve all uploaded assets from the database.
+- `POST /api/assets` - Upload a new asset (multipart/form-data with `file` field).
+
 ## Development
 
 Generate the Prisma client before starting:

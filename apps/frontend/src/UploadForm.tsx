@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { Asset } from '../../backend/src/types';
 
-export const UploadForm: React.FC = () => {
+interface UploadFormProps {
+  onSuccess?: () => void;
+}
+
+export const UploadForm: React.FC<UploadFormProps> = ({ onSuccess }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadResponse, setUploadResponse] = useState<Asset | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +42,7 @@ export const UploadForm: React.FC = () => {
       const rawData = await res.json();
       const data: Asset = { ...rawData, createdAt: new Date(rawData.createdAt) };
       setUploadResponse(data);
+      if (onSuccess) onSuccess();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during upload');
     } finally {

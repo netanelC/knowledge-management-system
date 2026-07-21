@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { HealthResponse } from 'types';
 import { UploadForm } from './UploadForm';
+import { AssetList } from './AssetList';
 
 function App() {
   const [status, setStatus] = useState<HealthResponse | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     fetch('/api/health')
@@ -30,7 +32,9 @@ function App() {
         )}
       </header>
 
-      <UploadForm />
+      <UploadForm onSuccess={() => setRefreshTrigger((prev) => prev + 1)} />
+
+      <AssetList refreshTrigger={refreshTrigger} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadAssetController } from './controller';
+import { uploadAssetController, getAllAssetsController } from './controller';
 
 const router = Router();
 
@@ -11,5 +11,6 @@ const upload = multer({
 });
 
 router.post('/', upload.single('file'), uploadAssetController);
+router.get('/', getAllAssetsController);
 
 export default router;
