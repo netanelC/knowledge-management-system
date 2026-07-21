@@ -1,13 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import pinoHttp from 'pino-http';
 import { logger } from './utils/logger';
 import { AppError } from './utils/error';
 import healthRouter from './components/health/router';
 import assetsRouter from './components/assets/router';
 
-dotenv.config();
 
 import config from 'config';
 
