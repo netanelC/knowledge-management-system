@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { createAssetRecord } from './model';
-import { isValidTextFile } from './utils';
+import { createAssetRecord, isValidTextFile } from './model';
 import { AppError } from '../../utils/error';
 
 export const uploadAssetController = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,7 +9,7 @@ export const uploadAssetController = async (req: Request, res: Response, next: N
       throw new AppError('No file uploaded', 400);
     }
 
-    const isText = isValidTextFile(file.mimetype, file.originalname);
+    const isText = isValidTextFile(file);
     if (!isText) {
       throw new AppError('Invalid file type. Only text files are allowed.', 400);
     }
