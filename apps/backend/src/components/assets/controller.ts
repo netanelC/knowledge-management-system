@@ -14,12 +14,14 @@ export const uploadAssetController = async (req: Request, res: Response, next: N
       throw new AppError('Invalid file type. Only text files are allowed.', 400);
     }
 
-    const response = await createAssetRecord({
+    const asset = await createAssetRecord({
       filename: file.originalname,
-      content: file.buffer,
     });
 
-    res.status(201).json(response);
+    res.status(201).json({
+      message: 'File uploaded successfully',
+      asset,
+    });
   } catch (error) {
     next(error);
   }

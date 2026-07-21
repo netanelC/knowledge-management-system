@@ -1,0 +1,254 @@
+diff --git a/CODING_STANDARDS.md b/CODING_STANDARDS.md
+index da6de5d..59b7c13 100644
+--- a/CODING_STANDARDS.md
++++ b/CODING_STANDARDS.md
+@@ -9,6 +9,7 @@ This document outlines the coding standards and quality requirements for this re
+ ## 2. Code Quality & Formatting
+ 
+ - **Don't Repeat Yourself (DRY):** Avoid duplicated code. Extract shared logic into reusable functions, hooks, or components.
++- **Clean Code:** Adhere to clean code best practices. Write readable, self-documenting code with meaningful names, small functions, and clear intent.
+ - **Use Shared Packages:** Whenever code, types, or utilities are useful across multiple applications (e.g., between frontend and backend), extract and use them from a shared Turborepo package (like `types`).
+ - **No Lint Errors:** Resolve all lint errors and warnings. Using `eslint-disable` or equivalent suppression comments is strictly prohibited unless explicitly authorized.
+ - **Code Formatting:** The codebase must be formatted using Prettier. Always run the formatter before finalizing a feature to maintain consistent styling.
+@@ -22,6 +23,11 @@ This document outlines the coding standards and quality requirements for this re
+ 
+ - **Node-TS Skills:** Implement and Review according to `node-ts-architect` and `nodejs-ts-testing-expert` skills. Ensure all their documented standards and patterns are applied meticulously.
+ 
++## 5. Architecture
++
++- **Layered Architecture:** Adhere to the following architectural flow for backend services: Routers -> Controllers -> Models -> DAL (Data Access Layer). Ensure clear separation of concerns between these layers.
++- **Configuration:** Prefer using the `config` npm package with `default.json` rather than `.env` for managing application configuration.
++
+ ---
+ 
+ _Note for AI Assistants: These instructions must be implicitly applied to every task performed in this repository. Never ignore lint warnings, always format your code, verify type safety, write tests, and update documentation as required._
+diff --git a/apps/backend/src/components/assets/controller.ts b/apps/backend/src/components/assets/controller.ts
+new file mode 100644
+index 0000000..996390c
+--- /dev/null
++++ b/apps/backend/src/components/assets/controller.ts
+@@ -0,0 +1,26 @@
++import { Request, Response, NextFunction } from 'express';
++import { createAssetRecord } from './model';
++import { AppError } from '../../utils/error';
++
++export const uploadAssetController = async (req: Request, res: Response, next: NextFunction) => {
++  try {
++    const file = req.file;
++    if (!file) {
++      throw new AppError('No file uploaded', 400);
++    }
++
++    const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
++    if (!isText) {
++      throw new AppError('Invalid file type. Only text files are allowed.', 400);
++    }
++
++    const response = await createAssetRecord({
++      filename: file.originalname,
++      content: file.buffer,
++    });
++
++    res.status(201).json(response);
++  } catch (error) {
++    next(error);
++  }
++};
+diff --git a/apps/backend/src/components/assets/model.ts b/apps/backend/src/components/assets/model.ts
+new file mode 100644
+index 0000000..67bb3a9
+--- /dev/null
++++ b/apps/backend/src/components/assets/model.ts
+@@ -0,0 +1,37 @@
++import { AssetUploadResponse } from 'types';
++import { prisma } from '../../utils/prisma';
++
++export interface AssetRecord {
++  id: string;
++  filename: string;
++  s3Key: string | null;
++  createdAt: Date;
++}
++
++export interface CreateAssetInput {
++  filename: string;
++  content: Buffer;
++}
++
++export const toAssetDTO = (asset: AssetRecord) => ({
++  id: asset.id,
++  filename: asset.filename,
++  s3Key: asset.s3Key,
++  createdAt: asset.createdAt.toISOString(),
++});
++
++export const createAssetRecord = async (
++  input: CreateAssetInput,
++): Promise<AssetUploadResponse> => {
++  const asset = await prisma.asset.create({
++    data: {
++      filename: input.filename,
++      s3Key: null,
++    },
++  });
++
++  return {
++    message: 'File uploaded successfully',
++    asset: toAssetDTO(asset),
++  };
++};
+diff --git a/apps/backend/src/components/assets/api.test.ts b/apps/backend/src/components/assets/router.test.ts
+similarity index 100%
+rename from apps/backend/src/components/assets/api.test.ts
+rename to apps/backend/src/components/assets/router.test.ts
+diff --git a/apps/backend/src/components/assets/api.ts b/apps/backend/src/components/assets/router.ts
+similarity index 53%
+rename from apps/backend/src/components/assets/api.ts
+rename to apps/backend/src/components/assets/router.ts
+index 8590f96..428c2ca 100644
+--- a/apps/backend/src/components/assets/api.ts
++++ b/apps/backend/src/components/assets/router.ts
+@@ -1,6 +1,6 @@
+ import { Router, Request, Response, NextFunction } from 'express';
+ import multer from 'multer';
+-import { handleAssetUpload } from './service';
++import { uploadAssetController } from './controller';
+ 
+ const router = Router();
+ 
+@@ -10,13 +10,6 @@ const upload = multer({
+   limits: { fileSize: 5 * 1024 * 1024 },
+ });
+ 
+-router.post('/', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
+-  try {
+-    const response = await handleAssetUpload(req.file);
+-    res.status(201).json(response);
+-  } catch (error) {
+-    next(error);
+-  }
+-});
++router.post('/', upload.single('file'), uploadAssetController);
+ 
+ export default router;
+diff --git a/apps/backend/src/components/assets/service.ts b/apps/backend/src/components/assets/service.ts
+deleted file mode 100644
+index c2e0157..0000000
+--- a/apps/backend/src/components/assets/service.ts
++++ /dev/null
+@@ -1,43 +0,0 @@
+-import { AssetUploadResponse } from 'types';
+-import { AppError } from '../../utils/error';
+-import { prisma } from '../../utils/prisma';
+-
+-export interface AssetUploadInput {
+-  originalname: string;
+-  mimetype: string;
+-  buffer: Buffer;
+-}
+-
+-const validateTextFile = (file: AssetUploadInput) => {
+-  const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
+-  if (!isText) {
+-    throw new AppError('Invalid file type. Only text files are allowed.', 400);
+-  }
+-};
+-
+-export const handleAssetUpload = async (
+-  file: AssetUploadInput | undefined,
+-): Promise<AssetUploadResponse> => {
+-  if (!file) {
+-    throw new AppError('No file uploaded', 400);
+-  }
+-
+-  validateTextFile(file);
+-
+-  const asset = await prisma.asset.create({
+-    data: {
+-      filename: file.originalname,
+-      s3Key: null,
+-    },
+-  });
+-
+-  return {
+-    message: 'File uploaded successfully',
+-    asset: {
+-      id: asset.id,
+-      filename: asset.filename,
+-      s3Key: asset.s3Key,
+-      createdAt: asset.createdAt.toISOString(),
+-    },
+-  };
+-};
+diff --git a/apps/backend/src/components/health/api.ts b/apps/backend/src/components/health/controller.ts
+similarity index 63%
+rename from apps/backend/src/components/health/api.ts
+rename to apps/backend/src/components/health/controller.ts
+index 7b983d0..7c7c9ef 100644
+--- a/apps/backend/src/components/health/api.ts
++++ b/apps/backend/src/components/health/controller.ts
+@@ -1,11 +1,8 @@
+-import { Router, Request, Response, NextFunction } from 'express';
++import { Request, Response, NextFunction } from 'express';
+ import { HealthResponse } from 'types';
+-import { pingDatabase } from './service';
+-import { AppError } from '../../utils/error';
++import { pingDatabase } from './model';
+ 
+-const router = Router();
+-
+-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
++export const healthCheckController = async (req: Request, res: Response, next: NextFunction) => {
+   const timestamp = new Date().toISOString();
+   try {
+     const dbPingResult = await pingDatabase();
+@@ -25,6 +22,4 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+     };
+     res.status(503).json(response);
+   }
+-});
+-
+-export default router;
++};
+diff --git a/apps/backend/src/components/health/service.ts b/apps/backend/src/components/health/model.ts
+similarity index 100%
+rename from apps/backend/src/components/health/service.ts
+rename to apps/backend/src/components/health/model.ts
+diff --git a/apps/backend/src/components/health/api.test.ts b/apps/backend/src/components/health/router.test.ts
+similarity index 100%
+rename from apps/backend/src/components/health/api.test.ts
+rename to apps/backend/src/components/health/router.test.ts
+diff --git a/apps/backend/src/components/health/router.ts b/apps/backend/src/components/health/router.ts
+new file mode 100644
+index 0000000..3899b87
+--- /dev/null
++++ b/apps/backend/src/components/health/router.ts
+@@ -0,0 +1,8 @@
++import { Router } from 'express';
++import { healthCheckController } from './controller';
++
++const router = Router();
++
++router.get('/', healthCheckController);
++
++export default router;
+diff --git a/apps/backend/src/index.ts b/apps/backend/src/index.ts
+index ad2da43..d84802a 100644
+--- a/apps/backend/src/index.ts
++++ b/apps/backend/src/index.ts
+@@ -1,13 +1,11 @@
+ import express, { Request, Response, NextFunction } from 'express';
+ import cors from 'cors';
+-import dotenv from 'dotenv';
+ import pinoHttp from 'pino-http';
+ import { logger } from './utils/logger';
+ import { AppError } from './utils/error';
+-import healthRouter from './components/health/api';
+-import assetsRouter from './components/assets/api';
++import healthRouter from './components/health/router';
++import assetsRouter from './components/assets/router';
+ 
+-dotenv.config();
+ 
+ import config from 'config';
+ 

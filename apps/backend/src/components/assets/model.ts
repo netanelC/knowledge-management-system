@@ -1,4 +1,4 @@
-import { AssetUploadResponse } from 'types';
+
 import { prisma } from '../../utils/prisma';
 
 export interface AssetRecord {
@@ -10,7 +10,6 @@ export interface AssetRecord {
 
 export interface CreateAssetInput {
   filename: string;
-  content: Buffer;
 }
 
 export const toAssetDTO = (asset: AssetRecord) => ({
@@ -22,7 +21,7 @@ export const toAssetDTO = (asset: AssetRecord) => ({
 
 export const createAssetRecord = async (
   input: CreateAssetInput,
-): Promise<AssetUploadResponse> => {
+) => {
   const asset = await prisma.asset.create({
     data: {
       filename: input.filename,
@@ -30,8 +29,5 @@ export const createAssetRecord = async (
     },
   });
 
-  return {
-    message: 'File uploaded successfully',
-    asset: toAssetDTO(asset),
-  };
+  return toAssetDTO(asset);
 };

@@ -16,7 +16,8 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
    pnpm install
    ```
 
-2. Environment Variables:
+2. Environment Variables & Configuration:
+   This project uses the `config` npm package (`apps/backend/config/default.json`) for application settings, and Prisma automatically reads from `.env`.
    Create a `.env` file in `apps/backend/` and configure your database URL:
 
    ```env
