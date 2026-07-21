@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { createAssetRecord, isValidTextFile } from './model';
 import { AppError } from '../../utils/error';
+import { createAssetRecord } from './model';
+
+export const isValidTextFile = (file: Express.Multer.File): boolean => {
+  return file.mimetype.startsWith('text/') || !!file.originalname.match(/\.(txt|md|csv)$/i);
+};
 
 export const uploadAssetController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -17,6 +21,7 @@ export const uploadAssetController = async (req: Request, res: Response, next: N
     const asset = await createAssetRecord({
       filename: file.originalname,
       size: file.size,
+      buffer: file.buffer,
     });
 
     res.status(201).json(asset);

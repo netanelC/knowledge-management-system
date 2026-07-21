@@ -13,11 +13,17 @@ The backend API for the Knowledge Management System.
 ## Configuration
 
 The backend uses the `config` npm package.
-Provide the database connection string in `apps/backend/.env`:
+Environment variables are mapped via `custom-environment-variables.json` and default values are defined in `default.json`.
 
-```env
-DATABASE_URL="postgresql://postgres:postgres@localhost:5432/knowledge_management_system?schema=public"
-```
+Available environment variables:
+
+- `DATABASE_URL` (Required)
+- `AWS_REGION`
+- `AWS_S3_BUCKET`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_ENDPOINT`
+- `AWS_S3_FORCE_PATH_STYLE`
 
 ## Development
 
