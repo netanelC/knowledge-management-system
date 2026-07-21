@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import { handleAssetUpload } from './service';
+import { uploadAssetController } from './controller';
 
 const router = Router();
 
@@ -10,13 +10,6 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-router.post('/', upload.single('file'), async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const response = await handleAssetUpload(req.file);
-    res.status(201).json(response);
-  } catch (error) {
-    next(error);
-  }
-});
+router.post('/', upload.single('file'), uploadAssetController);
 
 export default router;

@@ -9,6 +9,7 @@ This document outlines the coding standards and quality requirements for this re
 ## 2. Code Quality & Formatting
 
 - **Don't Repeat Yourself (DRY):** Avoid duplicated code. Extract shared logic into reusable functions, hooks, or components.
+- **Clean Code:** Adhere to clean code best practices. Write readable, self-documenting code with meaningful names, small functions, and clear intent.
 - **Use Shared Packages:** Whenever code, types, or utilities are useful across multiple applications (e.g., between frontend and backend), extract and use them from a shared Turborepo package (like `types`).
 - **No Lint Errors:** Resolve all lint errors and warnings. Using `eslint-disable` or equivalent suppression comments is strictly prohibited unless explicitly authorized.
 - **Code Formatting:** The codebase must be formatted using Prettier. Always run the formatter before finalizing a feature to maintain consistent styling.
@@ -21,6 +22,11 @@ This document outlines the coding standards and quality requirements for this re
 ## 4. Skills
 
 - **Node-TS Skills:** Implement and Review according to `node-ts-architect` and `nodejs-ts-testing-expert` skills. Ensure all their documented standards and patterns are applied meticulously.
+
+## 5. Architecture
+
+- **Layered Architecture:** Adhere to the following architectural flow for backend services: Routers -> Controllers -> Models -> DAL (Data Access Layer). Ensure clear separation of concerns between these layers.
+- **Configuration:** Prefer using the `config` npm package with `default.json` rather than `.env` for managing application configuration.
 
 ---
 

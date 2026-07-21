@@ -1,11 +1,8 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { HealthResponse } from 'types';
-import { pingDatabase } from './service';
-import { AppError } from '../../utils/error';
+import { pingDatabase } from './model';
 
-const router = Router();
-
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+export const healthCheckController = async (req: Request, res: Response, next: NextFunction) => {
   const timestamp = new Date().toISOString();
   try {
     const dbPingResult = await pingDatabase();
@@ -25,6 +22,4 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     };
     res.status(503).json(response);
   }
-});
-
-export default router;
+};

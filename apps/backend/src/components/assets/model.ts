@@ -8,6 +8,13 @@ export interface AssetUploadInput {
   buffer: Buffer;
 }
 
+const toAssetDTO = (asset: { id: string; filename: string; s3Key: string | null; createdAt: Date }) => ({
+  id: asset.id,
+  filename: asset.filename,
+  s3Key: asset.s3Key,
+  createdAt: asset.createdAt.toISOString(),
+});
+
 const validateTextFile = (file: AssetUploadInput) => {
   const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
   if (!isText) {
@@ -33,11 +40,6 @@ export const handleAssetUpload = async (
 
   return {
     message: 'File uploaded successfully',
-    asset: {
-      id: asset.id,
-      filename: asset.filename,
-      s3Key: asset.s3Key,
-      createdAt: asset.createdAt.toISOString(),
-    },
+    asset: toAssetDTO(asset),
   };
 };
