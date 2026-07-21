@@ -1,7 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { HealthResponse } from 'types';
 import { pingDatabase } from './model';
-export const healthCheckController = async (req: Request, res: Response, next: NextFunction) => {
+export const healthCheckController = async (
+  req: Request,
+  res: Response,
+  _next: NextFunction,
+): Promise<void> => {
   let status: HealthResponse['status'] = 'ok';
   let database: HealthResponse['database'] = 'connected';
 
