@@ -7,7 +7,7 @@ export const s3Client = new S3Client({
     accessKeyId: config.get<string>('s3.accessKeyId'),
     secretAccessKey: config.get<string>('s3.secretAccessKey'),
   },
-  endpoint: config.get<string>('s3.endpoint'),
+  endpoint: config.get<string>('s3.endpoint') || undefined,
   forcePathStyle: config.get<boolean>('s3.forcePathStyle'),
 });
 

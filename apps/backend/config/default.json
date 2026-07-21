@@ -1,14 +1,14 @@
 {
   "port": 3000,
   "database": {
-    "url": "postgresql://postgres:postgres@localhost:5432/knowledge_management_system?schema=public"
+    "url": ""
   },
   "s3": {
     "region": "us-east-1",
-    "accessKeyId": "minioadmin",
-    "secretAccessKey": "minioadmin",
-    "bucket": "knowledge-management-system",
-    "endpoint": "http://localhost:9000",
-    "forcePathStyle": true
+    "accessKeyId": "",
+    "secretAccessKey": "",
+    "bucket": "",
+    "endpoint": "",
+    "forcePathStyle": false
   }
 }

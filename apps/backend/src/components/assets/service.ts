@@ -3,6 +3,7 @@ import { AppError } from '../../utils/error';
 import { prisma } from '../../utils/prisma';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, bucketName } from '../../utils/s3';
+import { Readable } from 'stream';
 
 export interface AssetUploadInput {
   originalname: string;
@@ -33,11 +34,13 @@ export const handleAssetUpload = async (
   });
 
   try {
+    const stream = Readable.from(file.buffer);
     const command = new PutObjectCommand({
       Bucket: bucketName,
       Key: asset.id,
-      Body: file.buffer,
+      Body: stream,
       ContentType: file.mimetype,
+      ContentLength: file.buffer.length,
     });
     await s3Client.send(command);
   } catch (error) {

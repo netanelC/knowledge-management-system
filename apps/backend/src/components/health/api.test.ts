@@ -12,6 +12,9 @@ describe('Health API', () => {
   });
 
   it('GET /api/health should return ok status, database connected, and s3 connected', async () => {
+    // Arrange
+    // (mock setup done in beforeEach)
+
     // Act
     const response = await request(app).get('/api/health');
 
