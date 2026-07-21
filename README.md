@@ -41,6 +41,12 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
    npx prisma generate
    ```
 
+## API Endpoints
+
+- `GET /api/health` - Health check endpoint for API, Database, and S3.
+- `POST /api/assets` - Upload a text file to S3 and save metadata in the database.
+- `GET /api/assets` - Retrieve all uploaded asset metadata.
+
 ## Scripts
 
 Run all scripts from the root directory using Turborepo:

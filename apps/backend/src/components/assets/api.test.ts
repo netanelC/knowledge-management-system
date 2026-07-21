@@ -21,9 +21,8 @@ const createMockTextFile = () => ({
 });
 
 describe('Assets API', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
-    await prisma.asset.deleteMany();
   });
 
   describe('POST /api/assets', () => {
@@ -49,7 +48,7 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('createdAt');
     });
 
-    it('should return 400 when no file is provided', async () => {
+    it('should return 400 if no file is uploaded', async () => {
       // Act
       const response = await request(app).post('/api/assets');
 
@@ -60,10 +59,16 @@ describe('Assets API', () => {
   });
 
   describe('GET /api/assets', () => {
+    beforeEach(async () => {
+      await prisma.asset.deleteMany();
+    });
+
     it('should return a list of assets', async () => {
       // Arrange
+      const file1 = createMockTextFile();
+      const file2 = createMockTextFile();
       await prisma.asset.createMany({
-        data: [{ filename: 'test1.txt' }, { filename: 'test2.txt' }],
+        data: [{ filename: file1.filename }, { filename: file2.filename }],
       });
 
       // Act

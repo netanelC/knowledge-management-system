@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
 import type { AssetUploadResponse } from 'types';
+import { getErrorMessage } from './utils/error';
 
 interface UploadFormProps {
   onUploadSuccess?: () => void;
@@ -45,7 +46,7 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
         onUploadSuccess();
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'An error occurred during upload');
+      setError(getErrorMessage(err, 'An error occurred during upload'));
     } finally {
       setIsUploading(false);
     }
