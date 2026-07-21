@@ -1,7 +1,7 @@
 import { AssetUploadResponse, Asset } from 'types';
 import { AppError } from '../../utils/error';
 import { prisma } from '../../utils/prisma';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { s3Client, bucketName } from '../../utils/s3';
 import { Readable } from 'stream';
 
@@ -11,10 +11,11 @@ export interface AssetUploadInput {
   buffer: Buffer;
 }
 
-const validateTextFile = (file: AssetUploadInput) => {
+const validateAssetFile = (file: AssetUploadInput) => {
   const isText = file.mimetype.startsWith('text/') || file.originalname.match(/\.(txt|md|csv)$/i);
-  if (!isText) {
-    throw new AppError('Invalid file type. Only text files are allowed.', 400);
+  const isImage = file.mimetype.startsWith('image/');
+  if (!isText && !isImage) {
+    throw new AppError('Invalid file type. Only text and image files are allowed.', 400);
   }
 };
 
@@ -25,11 +26,14 @@ export const handleAssetUpload = async (
     throw new AppError('No file uploaded', 400);
   }
 
-  validateTextFile(file);
+  validateAssetFile(file);
+
+  const isImage = file.mimetype.startsWith('image/');
 
   const asset = await prisma.asset.create({
     data: {
       filename: file.originalname,
+      type: isImage ? 'IMAGE' : 'DOCUMENT',
     },
   });
 
@@ -57,6 +61,7 @@ export const handleAssetUpload = async (
     asset: {
       id: asset.id,
       filename: asset.filename,
+      type: asset.type,
       createdAt: asset.createdAt.toISOString(),
     },
   };
@@ -70,6 +75,33 @@ export const getAllAssets = async (): Promise<Asset[]> => {
   return assets.map((asset) => ({
     id: asset.id,
     filename: asset.filename,
+    type: asset.type,
     createdAt: asset.createdAt.toISOString(),
   }));
+};
+
+export const getAssetFile = async (
+  id: string,
+): Promise<{ stream: Readable; contentType: string }> => {
+  const asset = await prisma.asset.findUnique({ where: { id } });
+  if (!asset) {
+    throw new AppError('Asset not found', 404);
+  }
+
+  try {
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: id,
+    });
+    const response = await s3Client.send(command);
+    if (!response.Body) {
+      throw new Error('S3 response body is empty');
+    }
+    return {
+      stream: response.Body as Readable,
+      contentType: response.ContentType || 'application/octet-stream',
+    };
+  } catch (error) {
+    throw new AppError('Failed to fetch asset from storage', 502);
+  }
 };

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import multer from 'multer';
-import { handleAssetUpload, getAllAssets } from './service';
+import { handleAssetUpload, getAllAssets, getAssetFile } from './service';
 
 const router = Router();
 
@@ -23,6 +23,17 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const assets = await getAllAssets();
     res.json(assets);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get('/:id/download', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.params.id as string;
+    const { stream, contentType } = await getAssetFile(id);
+    res.setHeader('Content-Type', contentType);
+    stream.pipe(res);
   } catch (error) {
     next(error);
   }

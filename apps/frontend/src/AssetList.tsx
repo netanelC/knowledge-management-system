@@ -95,7 +95,15 @@ export function AssetList({ refreshKey }: AssetListProps) {
                 style={{ animationDelay: `${Math.random() * 0.3}s` }}
               >
                 <div className="asset-icon">
-                  <DocumentIcon />
+                  {asset.type === 'IMAGE' ? (
+                    <img
+                      src={`/api/assets/${asset.id}/download`}
+                      alt={asset.filename}
+                      className="asset-thumbnail"
+                    />
+                  ) : (
+                    <DocumentIcon />
+                  )}
                 </div>
                 <div className="asset-info">
                   <h3 className="asset-filename" title={asset.filename}>

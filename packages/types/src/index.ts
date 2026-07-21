@@ -10,6 +10,7 @@ export interface HealthResponse {
 export interface Asset {
   id: string;
   filename: string;
+  type: 'DOCUMENT' | 'IMAGE';
   createdAt: ISODateString;
 }
 

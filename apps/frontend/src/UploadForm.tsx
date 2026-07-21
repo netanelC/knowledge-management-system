@@ -59,12 +59,12 @@ export function UploadForm({ onUploadSuccess }: UploadFormProps) {
       <form onSubmit={handleUpload}>
         <div className="file-input-group">
           <label htmlFor="file-upload" className="file-label">
-            Select a text file (.txt, .md, .csv)
+            Select a document (.txt, .md, .csv) or image
           </label>
           <input
             id="file-upload"
             type="file"
-            accept=".txt,.md,.csv"
+            accept=".txt,.md,.csv,image/*"
             onChange={handleFileChange}
             className="file-input"
           />

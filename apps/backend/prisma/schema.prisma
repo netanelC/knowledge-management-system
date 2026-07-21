@@ -6,8 +6,14 @@ datasource db {
   provider = "postgresql"
 }
 
+enum AssetType {
+  DOCUMENT
+  IMAGE
+}
+
 model Asset {
-  id            String   @id @default(uuid())
+  id            String    @id @default(uuid())
   filename      String
-  createdAt     DateTime @default(now())
+  type          AssetType @default(DOCUMENT)
+  createdAt     DateTime  @default(now())
 }

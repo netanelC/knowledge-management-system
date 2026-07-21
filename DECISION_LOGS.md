@@ -13,3 +13,8 @@
 - Added `orderBy: { createdAt: 'desc' }` to backend API so newly uploaded assets appear first.
 - Extracted common duplicated code (`getErrorMessage`, SVG Document Icon, Date formatting) following Fowler's Duplicate Code smell.
 - Included an extensive UI overhaul with animations and a glassmorphism layout grid to fulfill the systemic instruction to use "Rich Aesthetics" and "Dynamic Design".
+
+## Ticket 06 - Image Upload Support
+
+- Created an `AssetType` enum in Prisma (`DOCUMENT`, `IMAGE`) to persist the mime-type categorization.
+- Created `GET /api/assets/:id/download` endpoint to proxy the S3 asset stream through the backend. This avoids the need for presigned URLs or complex bucket policies while allowing the frontend to easily fetch the image thumbnail using standard `<img>` tags.
