@@ -3,10 +3,13 @@ import config from 'config';
 
 export const s3Client = new S3Client({
   region: config.get<string>('s3.region'),
-  credentials: {
-    accessKeyId: config.get<string>('s3.accessKeyId'),
-    secretAccessKey: config.get<string>('s3.secretAccessKey'),
-  },
+  credentials:
+    config.get<string>('s3.accessKeyId') && config.get<string>('s3.secretAccessKey')
+      ? {
+          accessKeyId: config.get<string>('s3.accessKeyId'),
+          secretAccessKey: config.get<string>('s3.secretAccessKey'),
+        }
+      : undefined,
   endpoint: config.get<string>('s3.endpoint') || undefined,
   forcePathStyle: config.get<boolean>('s3.forcePathStyle'),
 });
