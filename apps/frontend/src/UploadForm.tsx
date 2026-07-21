@@ -35,7 +35,8 @@ export const UploadForm: React.FC = () => {
         throw new Error(`Upload failed with status ${res.status}`);
       }
 
-      const data: Asset = await res.json();
+      const rawData = await res.json();
+      const data: Asset = { ...rawData, createdAt: new Date(rawData.createdAt) };
       setUploadResponse(data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during upload');
@@ -82,11 +83,11 @@ export const UploadForm: React.FC = () => {
         <div className="alert success">
           <p className="alert-title">Upload Successful!</p>
           <p className="alert-body">
-            Database UUID: <strong>{uploadResponse.asset.id}</strong>
+            Database UUID: <strong>{uploadResponse.id}</strong>
           </p>
           <pre className="json-view">{JSON.stringify(uploadResponse, null, 2)}</pre>
         </div>
       )}
     </main>
   );
-}
+};
