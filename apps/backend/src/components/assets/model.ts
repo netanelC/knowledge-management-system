@@ -1,19 +1,8 @@
 import { createAssetInDb } from './DAL';
 import { AssetUploadResponse } from 'types';
+import { AssetRecord, CreateAssetInput } from './types';
 
-export interface AssetRecord {
-  id: string;
-  filename: string;
-  size: number;
-  createdAt: Date;
-}
-
-export interface CreateAssetInput {
-  filename: string;
-  size: number;
-}
-
-export const toAssetDTO = (asset: AssetRecord): AssetUploadResponse => ({
+const toAssetDTO = (asset: AssetRecord): AssetUploadResponse => ({
   id: asset.id,
   filename: asset.filename,
   size: asset.size,
