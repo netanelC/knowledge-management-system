@@ -1,10 +1,9 @@
-import { createAssetInDb } from './dal';
+import { createAssetInDb } from './DAL';
 import { AssetUploadResponse } from 'types';
 
 export interface AssetRecord {
   id: string;
   filename: string;
-  s3Key: string | null;
   size: number;
   createdAt: Date;
 }
@@ -17,7 +16,6 @@ export interface CreateAssetInput {
 export const toAssetDTO = (asset: AssetRecord): AssetUploadResponse => ({
   id: asset.id,
   filename: asset.filename,
-  s3Key: asset.s3Key,
   size: asset.size,
   createdAt: asset.createdAt.toISOString(),
 });

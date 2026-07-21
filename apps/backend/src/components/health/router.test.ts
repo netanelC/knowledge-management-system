@@ -11,9 +11,9 @@ describe('Health API', () => {
 
     // Assert
     expect(response.status).toBe(200);
-    expect(response.body).toHaveProperty('status', 'ok');
-    expect(response.body).toHaveProperty('database', 'connected');
-    expect(response.body).toHaveProperty('time');
-    expect(response.body).toHaveProperty('dbPingResult', 1);
+    expect(response.body).toEqual({
+      status: 'ok',
+      database: 'connected',
+    });
   });
 });

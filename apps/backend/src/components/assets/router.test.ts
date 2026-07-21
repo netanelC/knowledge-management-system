@@ -27,7 +27,6 @@ describe('Assets API', () => {
       expect(typeof asset.id).toBe('string');
       expect(asset).toHaveProperty('filename', mockFile.filename);
       expect(asset).toHaveProperty('size');
-      expect(asset).toHaveProperty('s3Key', null);
       expect(asset).toHaveProperty('createdAt');
     });
 
