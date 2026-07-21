@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import type { FormEvent } from 'react';
-import type { AssetUploadResponse } from 'types';
+import type { Asset } from 'backend/src/types';
 
-export function UploadForm() {
+export const UploadForm: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadResponse, setUploadResponse] = useState<AssetUploadResponse | null>(null);
+  const [uploadResponse, setUploadResponse] = useState<Asset | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -35,7 +35,7 @@ export function UploadForm() {
         throw new Error(`Upload failed with status ${res.status}`);
       }
 
-      const data: AssetUploadResponse = await res.json();
+      const data: Asset = await res.json();
       setUploadResponse(data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'An error occurred during upload');
