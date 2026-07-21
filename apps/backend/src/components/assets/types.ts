@@ -1,11 +1,11 @@
-export interface AssetRecord {
+export type AssetRecord = {
   id: string;
   filename: string;
   size: number;
   createdAt: Date;
-}
+};
 
-export interface CreateAssetInput {
+export type CreateAssetInput = {
   filename: string;
   size: number;
-}
+};
