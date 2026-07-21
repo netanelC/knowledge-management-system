@@ -4,12 +4,7 @@
   },
   "aws": {
     "s3": {
-      "region": "us-east-1",
-      "bucket": "ksm-test",
-      "accessKeyId": "minioadmin",
-      "secretAccessKey": "minioadmin",
-      "endpoint": "http://localhost:9000",
-      "forcePathStyle": true
+      "bucket": "ksm-test"
     }
   }
 }

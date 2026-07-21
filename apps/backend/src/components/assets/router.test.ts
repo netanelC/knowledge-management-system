@@ -32,12 +32,36 @@ describe('Assets API', () => {
 
     it('should return 400 if no file is uploaded', async () => {
       // Arrange
-      // Act
       const response = await request(app).post('/api/assets');
 
       // Assert
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('error', 'No file uploaded');
+    });
+  });
+
+  describe('GET /api/assets', () => {
+    it('should return 200 and a list of assets', async () => {
+      // Arrange
+      const mockFiles = [createMockTextFile(), createMockTextFile()];
+
+      for (const mockFile of mockFiles) {
+        await request(app)
+          .post('/api/assets')
+          .attach('file', Buffer.from(mockFile.content), mockFile.filename);
+      }
+
+      // Act
+      const response = await request(app).get('/api/assets');
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body.assets)).toBe(true);
+      expect(response.body.assets.length).toBeGreaterThanOrEqual(2);
+
+      const filenames = response.body.assets.map((a: { filename: string }) => a.filename);
+      expect(filenames).toContain(mockFiles[0].filename);
+      expect(filenames).toContain(mockFiles[1].filename);
     });
   });
 });
