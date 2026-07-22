@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest';
 import { createAssetRecord } from './model';
 import * as DAL from './DAL';
 import { prisma } from '../../utils/prisma';
-import { AssetFormat } from '@prisma/client';
+import { AssetFormat } from '../../types';
+import * as geminiModule from '../../utils/gemini';
 
 describe('Assets Model', () => {
   it('should throw error and clean up DB record if S3 upload fails', async () => {
@@ -48,5 +49,37 @@ describe('Assets Model', () => {
     expect(dbRecord?.extractedText).toBe(textContent);
 
     spy.mockRestore();
+  });
+
+  it('should generate and save AI metadata when uploading a text document', async () => {
+    const textContent = 'Document content about artificial intelligence and node.js testing.';
+    const mockFile = {
+      filename: 'ai-doc.txt',
+      size: textContent.length,
+      buffer: Buffer.from(textContent),
+      type: AssetFormat.TEXT,
+      mimetype: 'text/plain',
+    };
+
+    const s3Spy = vi.spyOn(DAL, 'uploadFileToS3').mockResolvedValueOnce();
+
+    const geminiSpy = vi.spyOn(geminiModule, 'generateDocumentMetadata').mockResolvedValueOnce({
+      description: 'Document about AI and Node.js.',
+      keywords: 'AI, Node.js, Testing',
+    });
+
+    const asset = await createAssetRecord(mockFile);
+
+    expect(geminiSpy).toHaveBeenCalledWith(textContent);
+    expect(asset.metadata).toBeDefined();
+    expect(asset.metadata?.description).toBe('Document about AI and Node.js.');
+    expect(asset.metadata?.keywords).toBe('AI, Node.js, Testing');
+
+    const dbRecord = await prisma.assetMetadata.findUnique({ where: { assetId: asset.id } });
+    expect(dbRecord).not.toBeNull();
+    expect(dbRecord?.description).toBe('Document about AI and Node.js.');
+
+    s3Spy.mockRestore();
+    geminiSpy.mockRestore();
   });
 });

@@ -18,6 +18,8 @@ Environment variables are mapped via `custom-environment-variables.json` and def
 Available environment variables:
 
 - `DATABASE_URL` (Required)
+- `GEMINI_API_KEY` (Optional - for AI metadata generation)
+- `GEMINI_MODEL` (Optional - defaults to `gemini-3.5-flash-lite`)
 - `AWS_REGION`
 - `AWS_S3_BUCKET`
 - `AWS_ACCESS_KEY_ID`

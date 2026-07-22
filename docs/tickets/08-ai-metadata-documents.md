@@ -4,9 +4,9 @@
 
 **Blocked by:** 07 — Text Document Extraction
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Backend integrates the Gemini SDK.
-- [ ] Backend prompts Gemini with the extracted text to summarize and generate tags.
-- [ ] Backend creates an `AssetMetadata` record linked to the `Asset`.
-- [ ] Frontend fetches and displays the description and keywords in the list.
+- [x] Backend integrates the Gemini SDK.
+- [x] Backend prompts Gemini with the extracted text to summarize and generate tags.
+- [x] Backend creates an `AssetMetadata` record linked to the `Asset`.
+- [x] Frontend fetches and displays the description and keywords in the list.

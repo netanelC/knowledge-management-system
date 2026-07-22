@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
+import * as geminiModule from '../../utils/gemini';
 
 const createMockTextFile = () => ({
   content: 'fake content ' + Math.random().toString(),
@@ -30,6 +31,34 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('type', 'TEXT');
       expect(asset).toHaveProperty('extractedText', mockFile.content);
       expect(asset).toHaveProperty('createdAt');
+    });
+
+    it('should generate metadata for text documents when Gemini is configured', async () => {
+      // Arrange
+      const geminiSpy = vi.spyOn(geminiModule, 'generateDocumentMetadata').mockResolvedValueOnce({
+        description: 'Mock document description',
+        keywords: 'mock, text, test',
+      });
+
+      const mockFile = createMockTextFile();
+      const buffer = Buffer.from(mockFile.content);
+
+      // Act
+      const response = await request(app)
+        .post('/api/assets')
+        .attach('file', buffer, mockFile.filename);
+
+      // Assert
+      expect(response.status).toBe(201);
+      const asset = response.body;
+      expect(asset).toHaveProperty('metadata');
+      expect(asset.metadata).toEqual({
+        assetId: asset.id,
+        description: 'Mock document description',
+        keywords: 'mock, text, test',
+      });
+
+      geminiSpy.mockRestore();
     });
 
     it('should upload an image file and return metadata with IMAGE type', async () => {

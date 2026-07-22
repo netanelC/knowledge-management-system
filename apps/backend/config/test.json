@@ -6,5 +6,8 @@
     "s3": {
       "bucket": "ksm-test"
     }
+  },
+  "gemini": {
+    "apiKey": "test-api-key"
   }
 }

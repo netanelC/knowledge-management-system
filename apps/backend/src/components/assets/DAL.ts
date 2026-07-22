@@ -1,7 +1,7 @@
 import { prisma } from '../../utils/prisma';
 import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getS3Client, getS3Bucket } from '../../utils/s3';
-import type { AssetFormat } from '@prisma/client';
+import type { AssetFormat, AssetMetadata } from '@prisma/client';
 
 export type CreateAssetDbInput = {
   filename: string;
@@ -13,11 +13,19 @@ export type CreateAssetDbInput = {
 export const createAssetInDb = async (data: CreateAssetDbInput) => {
   return await prisma.asset.create({
     data,
+    include: { metadata: true },
+  });
+};
+
+export const createAssetMetadataInDb = async (data: AssetMetadata) => {
+  return await prisma.assetMetadata.create({
+    data,
   });
 };
 
 export const getAllAssetsFromDb = async () => {
   return await prisma.asset.findMany({
+    include: { metadata: true },
     orderBy: { createdAt: 'desc' },
   });
 };

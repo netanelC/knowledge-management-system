@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AssetFormat, type Asset } from '../../backend/src/types';
+import type { Asset } from '../../backend/src/types';
 import { formatSize } from 'types';
 
 export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
@@ -55,7 +55,7 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
           {assets.map((asset) => (
             <div key={asset.id} className="asset-card" title={asset.filename}>
               <div className="asset-icon">
-                {asset.type === AssetFormat.IMAGE ? (
+                {asset.type === 'IMAGE' ? (
                   <img
                     src={`/api/assets/${asset.id}/content`}
                     alt={asset.filename}
@@ -70,6 +70,36 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
                 <div className="asset-meta">
                   {formatSize(asset.size)} • {new Date(asset.createdAt).toLocaleDateString()}
                 </div>
+                {asset.metadata ? (
+                  <div className="asset-ai-metadata">
+                    <div className="asset-ai-header">
+                      <span className="asset-ai-badge">✨ AI Summary</span>
+                    </div>
+                    {asset.metadata.description && (
+                      <p className="asset-description">{asset.metadata.description}</p>
+                    )}
+                    {asset.metadata.keywords && (
+                      <div className="asset-tags">
+                        {Array.from(
+                          new Set(
+                            asset.metadata.keywords
+                              .split(',')
+                              .map((tag) => tag.trim())
+                              .filter(Boolean),
+                          ),
+                        ).map((tag) => (
+                          <span key={tag} className="asset-tag">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="asset-ai-metadata">
+                    <span className="asset-no-ai">No AI metadata</span>
+                  </div>
+                )}
               </div>
             </div>
           ))}

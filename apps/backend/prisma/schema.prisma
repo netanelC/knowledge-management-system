@@ -12,10 +12,19 @@ enum AssetFormat {
 }
 
 model Asset {
-  id            String      @id @default(uuid())
+  id            String         @id @default(uuid())
   filename      String
   size          Int
   type          AssetFormat
   extractedText String?
-  createdAt     DateTime    @default(now())
+  createdAt     DateTime       @default(now())
+  metadata      AssetMetadata?
 }
+
+model AssetMetadata {
+  assetId     String   @id
+  description String
+  keywords    String
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+}
+
