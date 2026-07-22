@@ -40,8 +40,9 @@ Run all scripts from the root directory using Turborepo:
 ## Features & Supported Formats
 
 - **File Upload:** Upload text documents (`.txt`, `.md`, `.csv`) and image files (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`).
+- **Text Extraction:** Automatically extracts raw string content from uploaded text files and persists it in the database (`extractedText` column).
 - **S3 Storage:** Assets are streamed directly to S3 and served back with exact MIME content headers.
-- **Database Persistence:** Metadata stored with Prisma PostgreSQL ORM.
+- **Database Persistence:** Metadata and extracted text stored with Prisma PostgreSQL ORM.
 
 ## Architecture
 

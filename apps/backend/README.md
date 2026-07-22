@@ -29,7 +29,7 @@ Available environment variables:
 
 - `GET /api/health` - Check health status of API, Database, and S3 Storage.
 - `GET /api/assets` - Retrieve all uploaded assets from the database.
-- `POST /api/assets` - Upload a new asset (multipart/form-data with `file` field). Supports text (`.txt`, `.md`, `.csv`) and image (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`) formats.
+- `POST /api/assets` - Upload a new asset (multipart/form-data with `file` field). Supports text (`.txt`, `.md`, `.csv`) and image (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`) formats. Text document contents are automatically extracted and saved to `extractedText`.
 - `GET /api/assets/:id/content` - Stream asset content from S3 with proper Content-Type header.
 
 ## Development

@@ -6,7 +6,6 @@ export type HealthResponse = {
   storage: 'connected' | 'disconnected';
 };
 
-
 export const ALLOWED_TEXT_EXTENSIONS = ['.txt', '.md', '.csv'];
 export const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
 export const ALLOWED_ALL_EXTENSIONS = [...ALLOWED_TEXT_EXTENSIONS, ...ALLOWED_IMAGE_EXTENSIONS];

@@ -28,6 +28,7 @@ describe('Assets API', () => {
       expect(asset).toHaveProperty('filename', mockFile.filename);
       expect(asset).toHaveProperty('size');
       expect(asset).toHaveProperty('type', 'TEXT');
+      expect(asset).toHaveProperty('extractedText', mockFile.content);
       expect(asset).toHaveProperty('createdAt');
     });
 
