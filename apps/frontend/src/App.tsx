@@ -32,9 +32,10 @@ function App() {
         )}
       </header>
 
-      <UploadForm onSuccess={() => setRefreshTrigger((prev) => prev + 1)} />
-
-      <AssetList refreshTrigger={refreshTrigger} />
+      <div className="app-content-grid">
+        <UploadForm onSuccess={() => setRefreshTrigger((prev) => prev + 1)} />
+        <AssetList refreshTrigger={refreshTrigger} />
+      </div>
     </div>
   );
 }

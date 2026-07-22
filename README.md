@@ -37,8 +37,14 @@ Run all scripts from the root directory using Turborepo:
 - **Test:** `pnpm run test` (Runs tests across all packages)
 - **Format:** `pnpm run format:fix` (Formats codebase using Prettier)
 
+## Features & Supported Formats
+
+- **File Upload:** Upload text documents (`.txt`, `.md`, `.csv`) and image files (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`).
+- **S3 Storage:** Assets are streamed directly to S3 and served back with exact MIME content headers.
+- **Database Persistence:** Metadata stored with Prisma PostgreSQL ORM.
+
 ## Architecture
 
 - `apps/frontend`: Vite + React + TypeScript frontend
 - `apps/backend`: Express + TypeScript backend with Prisma ORM
-- `packages/types`: Shared TypeScript definitions
+- `packages/types`: Shared TypeScript definitions and format utilities

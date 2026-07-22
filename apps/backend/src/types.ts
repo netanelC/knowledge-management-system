@@ -1,1 +1,1 @@
-export type { Asset } from '@prisma/client';
+export { AssetFormat, type Asset } from '@prisma/client';

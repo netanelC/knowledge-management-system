@@ -1,16 +1,24 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadAssetController, getAllAssetsController } from './controller';
+import config from 'config';
+import {
+  uploadAssetController,
+  getAllAssetsController,
+  getAssetContentController,
+} from './controller';
 
 const router = Router();
 
-// Configure multer for in-memory storage (limit file size to 5MB to prevent OOM)
+const maxFileSize = config.get<number>('assets.maxFileSize');
+
+// Configure multer for in-memory storage (limit file size from config to prevent OOM)
 const upload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: maxFileSize },
 });
 
 router.post('/', upload.single('file'), uploadAssetController);
 router.get('/', getAllAssetsController);
+router.get('/:id/content', getAssetContentController);
 
 export default router;
