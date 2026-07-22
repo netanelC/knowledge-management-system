@@ -15,5 +15,9 @@
         "__format": "json"
       }
     }
+  },
+  "gemini": {
+    "apiKey": "GEMINI_API_KEY",
+    "model": "GEMINI_MODEL"
   }
 }

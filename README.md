@@ -18,6 +18,7 @@ A fullstack monorepo application using Turborepo, React (Vite), Express, and Pri
 
 2. Environment Variables & Configuration:
    The application uses the `config` npm package for configuration. Instead of a `.env` file, database connections and settings are stored in `apps/backend/config/default.json` and `test.json`.
+   Optionally set `GEMINI_API_KEY` to enable AI metadata generation (summaries & keywords) via Google Gemini API (`GEMINI_MODEL` defaults to `gemini-3.5-flash-lite`).
    Prisma is configured to dynamically read these settings via `prisma.config.ts`.
 
 3. Database Initialization:
@@ -41,6 +42,7 @@ Run all scripts from the root directory using Turborepo:
 
 - **File Upload:** Upload text documents (`.txt`, `.md`, `.csv`) and image files (`.png`, `.jpg`, `.jpeg`, `.gif`, `.webp`, `.svg`).
 - **Text Extraction:** Automatically extracts raw string content from uploaded text files and persists it in the database (`extractedText` column).
+- **AI Metadata Generation:** Sends document text to Google Gemini API to automatically generate summaries and tag keywords.
 - **S3 Storage:** Assets are streamed directly to S3 and served back with exact MIME content headers.
 - **Database Persistence:** Metadata and extracted text stored with Prisma PostgreSQL ORM.
 

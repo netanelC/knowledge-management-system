@@ -15,5 +15,9 @@
   },
   "assets": {
     "maxFileSize": 20971520
+  },
+  "gemini": {
+    "apiKey": "",
+    "model": "gemini-3.5-flash-lite"
   }
 }
