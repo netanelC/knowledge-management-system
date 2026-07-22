@@ -12,9 +12,10 @@ enum AssetFormat {
 }
 
 model Asset {
-  id        String      @id @default(uuid())
-  filename  String
-  size      Int
-  type      AssetFormat
-  createdAt DateTime    @default(now())
+  id            String      @id @default(uuid())
+  filename      String
+  size          Int
+  type          AssetFormat
+  extractedText String?
+  createdAt     DateTime    @default(now())
 }

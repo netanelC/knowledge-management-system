@@ -31,8 +31,16 @@ export const isValidAssetFile = (
 };
 
 export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset> => {
+  const extractedText =
+    input.type === AssetFormat.TEXT ? input.buffer.toString('utf-8') : undefined;
+
   // Database generates the ID and creates the record first
-  const asset = await createAssetInDb(input.filename, input.size, input.type);
+  const asset = await createAssetInDb({
+    filename: input.filename,
+    size: input.size,
+    type: input.type,
+    extractedText,
+  });
 
   try {
     // Attempt S3 upload with raw buffer

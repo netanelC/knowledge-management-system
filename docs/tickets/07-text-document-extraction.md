@@ -6,5 +6,5 @@
 
 **Status:** ready-for-agent
 
-- [ ] Backend converts the uploaded text file buffer to a string.
-- [ ] Backend saves this string into the `extractedText` field of the `Asset` record.
+- [x] Backend converts the uploaded text file buffer to a string.
+- [x] Backend saves this string into the `extractedText` field of the `Asset` record.

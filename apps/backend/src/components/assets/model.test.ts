@@ -28,4 +28,25 @@ describe('Assets Model', () => {
 
     spy.mockRestore();
   });
+
+  it('should extract text content for text files and set extractedText in DB', async () => {
+    const textContent = 'Hello world text extraction content';
+    const mockFile = {
+      filename: 'sample.txt',
+      size: textContent.length,
+      buffer: Buffer.from(textContent),
+      type: AssetFormat.TEXT,
+      mimetype: 'text/plain',
+    };
+
+    const spy = vi.spyOn(DAL, 'uploadFileToS3').mockResolvedValueOnce();
+
+    const asset = await createAssetRecord(mockFile);
+    expect(asset.extractedText).toBe(textContent);
+
+    const dbRecord = await prisma.asset.findUnique({ where: { id: asset.id } });
+    expect(dbRecord?.extractedText).toBe(textContent);
+
+    spy.mockRestore();
+  });
 });

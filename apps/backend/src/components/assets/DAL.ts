@@ -3,13 +3,16 @@ import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getS3Client, getS3Bucket } from '../../utils/s3';
 import type { AssetFormat } from '@prisma/client';
 
-export const createAssetInDb = async (filename: string, size: number, type: AssetFormat) => {
+export type CreateAssetDbInput = {
+  filename: string;
+  size: number;
+  type: AssetFormat;
+  extractedText?: string;
+};
+
+export const createAssetInDb = async (data: CreateAssetDbInput) => {
   return await prisma.asset.create({
-    data: {
-      filename,
-      size,
-      type,
-    },
+    data,
   });
 };
 
