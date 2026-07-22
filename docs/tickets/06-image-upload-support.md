@@ -4,8 +4,8 @@
 
 **Blocked by:** 05 — Asset List UI
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] UI file picker accepts image formats.
-- [ ] Backend reads the MIME type and sets the `Asset.type` to `IMAGE` in the DB.
-- [ ] Frontend uses the asset `id` (as the S3 key) to fetch and display an image thumbnail in the list.
+- [x] UI file picker accepts image formats.
+- [x] Backend reads the MIME type and sets the `Asset.type` to `IMAGE` in the DB.
+- [x] Frontend uses the asset `id` (as the S3 key) to fetch and display an image thumbnail in the list.

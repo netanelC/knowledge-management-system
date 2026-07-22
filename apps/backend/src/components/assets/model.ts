@@ -1,17 +1,42 @@
-import { createAssetInDb, uploadFileToS3, deleteAssetFromDb, getAllAssetsFromDb } from './DAL';
+import {
+  createAssetInDb,
+  uploadFileToS3,
+  deleteAssetFromDb,
+  getAllAssetsFromDb,
+  getAssetS3Object as getS3ObjectDAL,
+} from './DAL';
 import { CreateAssetInput } from './types';
 import type { Asset } from '@prisma/client';
+import { AssetFormat } from '@prisma/client';
 import { logger } from '../../utils/logger';
-import { Readable } from 'stream';
+import { ALLOWED_TEXT_EXTENSIONS, ALLOWED_IMAGE_EXTENSIONS } from 'types';
+
+export const isValidAssetFile = (
+  file: Express.Multer.File,
+): { valid: boolean; type?: AssetFormat } => {
+  if (file.mimetype.startsWith('text/')) return { valid: true, type: AssetFormat.TEXT };
+  if (file.mimetype.startsWith('image/')) return { valid: true, type: AssetFormat.IMAGE };
+
+  const isTextExt = ALLOWED_TEXT_EXTENSIONS.some((ext) =>
+    file.originalname.toLowerCase().endsWith(ext),
+  );
+  const isImageExt = ALLOWED_IMAGE_EXTENSIONS.some((ext) =>
+    file.originalname.toLowerCase().endsWith(ext),
+  );
+
+  if (isTextExt) return { valid: true, type: AssetFormat.TEXT };
+  if (isImageExt) return { valid: true, type: AssetFormat.IMAGE };
+
+  return { valid: false };
+};
 
 export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset> => {
   // Database generates the ID and creates the record first
-  const asset = await createAssetInDb(input.filename, input.size);
-  const fileStream = Readable.from(input.buffer);
+  const asset = await createAssetInDb(input.filename, input.size, input.type);
 
   try {
     // Attempt S3 upload with raw buffer
-    await uploadFileToS3(asset.id, fileStream, input.size);
+    await uploadFileToS3(asset.id, input.buffer, input.size, input.mimetype);
   } catch (error) {
     // If S3 fails, try to delete the stranded DB record
     try {
@@ -30,4 +55,8 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
 
 export const getAllAssets = async (): Promise<Asset[]> => {
   return await getAllAssetsFromDb();
+};
+
+export const getAssetS3Object = async (id: string) => {
+  return await getS3ObjectDAL(id);
 };

@@ -12,5 +12,8 @@
       "endpoint": "http://localhost:9000",
       "forcePathStyle": true
     }
+  },
+  "assets": {
+    "maxFileSize": 20971520
   }
 }
