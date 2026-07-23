@@ -152,6 +152,82 @@ describe('Assets API', () => {
       expect(filenames).toContain(mockFiles[0].filename);
       expect(filenames).toContain(mockFiles[1].filename);
     });
+
+    it('should return filtered assets matching query parameter q', async () => {
+      // Arrange
+      const searchTargetFilename = 'special_quantum_report_' + Date.now() + '.txt';
+      const otherFilename = 'unrelated_file_' + Date.now() + '.txt';
+
+      await request(app)
+        .post('/api/assets')
+        .attach('file', Buffer.from('quantum computing notes'), searchTargetFilename);
+
+      await request(app)
+        .post('/api/assets')
+        .attach('file', Buffer.from('regular text content'), otherFilename);
+
+      // Act: Search for 'quantum'
+      const response = await request(app).get('/api/assets?q=quantum');
+
+      // Assert
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body.assets)).toBe(true);
+
+      const returnedFilenames = response.body.assets.map((a: { filename: string }) => a.filename);
+      expect(returnedFilenames).toContain(searchTargetFilename);
+      expect(returnedFilenames).not.toContain(otherFilename);
+    });
+
+    it('should return filtered assets matching query parameter q against AI metadata description and keywords', async () => {
+      // Arrange
+      const targetFilename = 'ai_search_test_' + Date.now() + '.txt';
+      const geminiSpy = vi.spyOn(geminiModule, 'generateMetadataForAsset').mockResolvedValueOnce({
+        description: 'Deep neural network architecture overview',
+        keywords: 'astronomy, astrophysics, space',
+      });
+
+      await request(app)
+        .post('/api/assets')
+        .attach('file', Buffer.from('some text'), targetFilename);
+
+      // Act 1: Search by description keyword
+      const descResponse = await request(app).get('/api/assets?q=neural');
+      expect(descResponse.status).toBe(200);
+      const descFilenames = descResponse.body.assets.map((a: { filename: string }) => a.filename);
+      expect(descFilenames).toContain(targetFilename);
+
+      // Act 2: Search by tag keyword
+      const tagResponse = await request(app).get('/api/assets?q=astrophysics');
+      expect(tagResponse.status).toBe(200);
+      const tagFilenames = tagResponse.body.assets.map((a: { filename: string }) => a.filename);
+      expect(tagFilenames).toContain(targetFilename);
+
+      geminiSpy.mockRestore();
+    });
+
+    it('should return assets matching multi-word natural language search terms', async () => {
+      // Arrange
+      const targetFilename = 'portrait_' + Date.now() + '.jpg';
+      const geminiSpy = vi.spyOn(geminiModule, 'generateMetadataForAsset').mockResolvedValueOnce({
+        description: 'A portrait of a person with dark features',
+        keywords: 'black, hair, model, studio',
+      });
+
+      await request(app).post('/api/assets').attach('file', Buffer.from('fake image content'), {
+        filename: targetFilename,
+        contentType: 'image/jpeg',
+      });
+
+      // Act: Search for "portrait"
+      const response = await request(app).get('/api/assets?q=portrait');
+
+      // Assert
+      expect(response.status).toBe(200);
+      const filenames = response.body.assets.map((a: { filename: string }) => a.filename);
+      expect(filenames).toContain(targetFilename);
+
+      geminiSpy.mockRestore();
+    });
   });
 
   describe('GET /api/assets/:id/content', () => {

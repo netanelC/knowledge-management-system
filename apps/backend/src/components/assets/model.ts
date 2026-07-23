@@ -7,7 +7,8 @@ import {
   getAssetS3Object as getS3ObjectDAL,
 } from './DAL';
 import type { CreateAssetInput } from './types';
-import { AssetFormat, type Asset } from '../../types';
+import type { Asset } from '../../types';
+import { AssetFormat } from '../../types';
 import { logger } from '../../utils/logger';
 import { generateMetadataForAsset } from '../../utils/gemini';
 import { ALLOWED_TEXT_EXTENSIONS, ALLOWED_IMAGE_EXTENSIONS } from 'types';
@@ -80,10 +81,10 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
   };
 };
 
-export const getAllAssets = async (): Promise<Asset[]> => {
-  return getAllAssetsFromDb();
+export const getAllAssets = async (query?: string): Promise<Asset[]> => {
+  return await getAllAssetsFromDb(query);
 };
 
 export const getAssetS3Object = async (id: string) => {
-  return getS3ObjectDAL(id);
+  return await getS3ObjectDAL(id);
 };

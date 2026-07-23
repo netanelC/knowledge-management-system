@@ -17,3 +17,15 @@ export const formatSize = (bytes: number): string => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 };
+
+export const parseKeywords = (keywords?: string): string[] => {
+  if (!keywords) return [];
+  return Array.from(
+    new Set(
+      keywords
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    ),
+  );
+};

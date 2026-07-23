@@ -4,9 +4,9 @@
 
 **Blocked by:** 09 — AI Metadata Generation (Images)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] UI adds a search input field.
-- [ ] Backend `GET /api/assets` accepts an optional `q` query string parameter.
-- [ ] Prisma executes a search query across the relevant string fields.
-- [ ] Frontend dynamically updates the list based on the search results.
+- [x] UI adds a search input field.
+- [x] Backend `GET /api/assets` accepts an optional `q` query string parameter.
+- [x] Prisma executes a search query across the relevant string fields.
+- [x] Frontend dynamically updates the list based on the search results.

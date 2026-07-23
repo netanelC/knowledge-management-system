@@ -79,7 +79,7 @@ Do not include any extra commentary. Output JSON only.
 Document text:
 ${text}`;
 
-    return queryGeminiModel(prompt, 'document metadata');
+    return await queryGeminiModel(prompt, 'document metadata');
   }
 }
 
@@ -98,7 +98,7 @@ class ImageMetadataStrategy implements FormatMetadataStrategy {
 
 Do not include any extra commentary. Output JSON only.`;
 
-    return queryGeminiModel([imagePart, prompt], 'image metadata');
+    return await queryGeminiModel([imagePart, prompt], 'image metadata');
   }
 }
 
@@ -120,5 +120,5 @@ export const generateMetadataForAsset = async (
     return null;
   }
 
-  return strategy.generate(buffer, mimeType);
+  return await strategy.generate(buffer, mimeType);
 };

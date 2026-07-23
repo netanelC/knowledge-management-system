@@ -45,6 +45,7 @@ Run all scripts from the root directory using Turborepo:
 - **AI Metadata Generation:** Sends document text to Google Gemini API to automatically generate summaries and tag keywords.
 - **S3 Storage:** Assets are streamed directly to S3 and served back with exact MIME content headers.
 - **Database Persistence:** Metadata and extracted text stored with Prisma PostgreSQL ORM.
+- **Smart Search:** Case-insensitive search across filenames, document text, AI descriptions, and keywords via `GET /api/assets?q=...`.
 
 ## Architecture
 

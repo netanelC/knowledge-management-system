@@ -2,6 +2,8 @@ import { prisma } from '../../utils/prisma';
 import { PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getS3Client, getS3Bucket } from '../../utils/s3';
 import type { AssetFormat, AssetMetadata } from '@prisma/client';
+import type { Readable } from 'stream';
+import type { Asset } from '../../types';
 
 export type CreateAssetDbInput = {
   filename: string;
@@ -23,8 +25,27 @@ export const createAssetMetadataInDb = async (data: AssetMetadata) => {
   });
 };
 
-export const getAllAssetsFromDb = async () => {
+const searchFilters = (query: string) => ({
+  contains: query,
+  mode: 'insensitive' as const,
+});
+
+export const getAllAssetsFromDb = async (query?: string): Promise<Asset[]> => {
+  const search = query?.trim();
+
+  const where = search
+    ? {
+        OR: [
+          { filename: searchFilters(search) },
+          { extractedText: searchFilters(search) },
+          { metadata: { description: searchFilters(search) } },
+          { metadata: { keywords: searchFilters(search) } },
+        ],
+      }
+    : undefined;
+
   return await prisma.asset.findMany({
+    where,
     include: { metadata: true },
     orderBy: { createdAt: 'desc' },
   });
@@ -38,7 +59,7 @@ export const deleteAssetFromDb = async (id: string) => {
 
 export const uploadFileToS3 = async (
   key: string,
-  body: Buffer | import('stream').Readable,
+  body: Buffer | Readable,
   contentLength: number,
   contentType: string,
 ): Promise<void> => {
