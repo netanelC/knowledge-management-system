@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import type { Asset } from '../../backend/src/types';
-import { formatSize, parseKeywords } from 'types';
+import { formatSize, parseKeywords, type Asset } from '@backend/types';
 
 export type AssetModalProps = {
   asset: Asset;

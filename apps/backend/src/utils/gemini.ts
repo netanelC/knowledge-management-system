@@ -1,9 +1,9 @@
 import { GoogleGenAI } from '@google/genai';
 import config from 'config';
 import { logger } from './logger';
-import { AssetFormat, type GeneratedMetadata } from '../types';
+import { AssetMetadata, AssetFormat } from '@prisma/client';
 
-export type { GeneratedMetadata };
+export type GeneratedMetadata = Pick<AssetMetadata, 'description' | 'keywords'>;
 
 interface FormatMetadataStrategy {
   generate(buffer: Buffer, mimeType: string): Promise<GeneratedMetadata | null>;

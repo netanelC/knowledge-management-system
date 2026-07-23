@@ -7,11 +7,11 @@ import {
   getAssetS3Object as getS3ObjectDAL,
 } from './DAL';
 import type { CreateAssetInput } from './types';
-import type { Asset } from '../../types';
-import { AssetFormat } from '../../types';
 import { logger } from '../../utils/logger';
 import { generateMetadataForAsset } from '../../utils/gemini';
-import { ALLOWED_TEXT_EXTENSIONS, ALLOWED_IMAGE_EXTENSIONS } from 'types';
+import { ALLOWED_TEXT_EXTENSIONS, ALLOWED_IMAGE_EXTENSIONS } from '../../types';
+import type { Asset } from '../../types';
+import { AssetFormat } from '@prisma/client';
 
 export const isValidAssetFile = (
   file: Express.Multer.File,

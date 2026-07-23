@@ -1,7 +1,33 @@
-import type { Prisma, AssetMetadata } from '@prisma/client';
-
-export { AssetFormat, type AssetMetadata } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 
 export type Asset = Prisma.AssetGetPayload<{ include: { metadata: true } }>;
 
-export type GeneratedMetadata = Pick<AssetMetadata, 'description' | 'keywords'>;
+export type HealthResponse = {
+  status: 'ok' | 'error';
+  database: 'connected' | 'disconnected';
+  storage: 'connected' | 'disconnected';
+};
+
+export const ALLOWED_TEXT_EXTENSIONS = ['.txt', '.md', '.csv'];
+export const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'];
+export const ALLOWED_ALL_EXTENSIONS = [...ALLOWED_TEXT_EXTENSIONS, ...ALLOWED_IMAGE_EXTENSIONS];
+
+export const formatSize = (bytes: number): string => {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+};
+
+export const parseKeywords = (keywords?: string): string[] => {
+  if (!keywords) return [];
+  return Array.from(
+    new Set(
+      keywords
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean),
+    ),
+  );
+};

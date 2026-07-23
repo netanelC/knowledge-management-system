@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { HealthResponse } from 'types';
+import { HealthResponse } from '../../types';
 import { pingDatabase, pingStorage } from './model';
 export const healthCheckController = async (
   req: Request,

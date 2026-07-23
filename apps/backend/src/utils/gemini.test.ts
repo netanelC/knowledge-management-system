@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { generateMetadataForAsset } from './gemini';
 import { GoogleGenAI } from '@google/genai';
-import { AssetFormat } from '../types';
+import { AssetFormat } from '@prisma/client';
 
 vi.mock('@google/genai');
 

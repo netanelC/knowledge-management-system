@@ -27,4 +27,3 @@ model AssetMetadata {
   keywords    String
   asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 }
-

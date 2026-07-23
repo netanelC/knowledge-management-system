@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import type { HealthResponse } from 'types';
+import type { HealthResponse } from '@backend/types';
 import { UploadForm } from './UploadForm';
 import { AssetList } from './AssetList';
 

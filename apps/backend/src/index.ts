@@ -6,14 +6,12 @@ import { logger } from './utils/logger';
 import { AppError } from './utils/error';
 import healthRouter from './components/health/router';
 import assetsRouter from './components/assets/router';
-
 import config from 'config';
 
 const app = express();
 const port = config.get<number>('port');
 
 app.use(cors());
-
 app.use(express.json());
 app.use(pinoHttp({ logger }));
 

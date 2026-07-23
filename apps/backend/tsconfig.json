@@ -11,5 +11,5 @@
     "moduleResolution": "NodeNext"
   },
   "include": ["src", "tests"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "src/generated"]
 }

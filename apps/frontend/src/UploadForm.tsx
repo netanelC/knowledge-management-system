@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import type { FormEvent } from 'react';
-import { ALLOWED_ALL_EXTENSIONS } from 'types';
-import type { Asset } from '../../backend/src/types';
+import { ALLOWED_ALL_EXTENSIONS } from '@backend/types';
+import type { Asset } from '@backend/types';
 
 type UploadFormProps = {
   onSuccess?: () => void;

@@ -8,6 +8,9 @@
     "types": ["vite/client"],
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
+    "paths": {
+      "@backend/types": ["../backend/src/types.ts"]
+    },
 
     /* Bundler mode */
     "moduleResolution": "bundler",

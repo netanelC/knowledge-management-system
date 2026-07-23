@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import type { Asset } from '../../backend/src/types';
-import { formatSize, parseKeywords } from 'types';
+import { formatSize, parseKeywords, type Asset } from '@backend/types';
 import { AssetModal } from './AssetModal';
 
 export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {

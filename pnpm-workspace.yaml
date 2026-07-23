@@ -4,8 +4,10 @@ packages:
 
 allowBuilds:
   '@prisma/engines': true
+  '@google/genai': true
   esbuild: true
   prisma: true
+  protobufjs: true
 
 catalog:
   eslint: '^10.7.0'

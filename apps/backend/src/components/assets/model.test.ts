@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createAssetRecord } from './model';
 import * as DAL from './DAL';
 import { prisma } from '../../utils/prisma';
-import { AssetFormat } from '../../types';
 import * as geminiModule from '../../utils/gemini';
+import { AssetFormat } from '@prisma/client';
 
 describe('Assets Model', () => {
   beforeEach(() => {
