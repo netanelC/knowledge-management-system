@@ -27,9 +27,10 @@ export const uploadAssetController = async (req: Request, res: Response, next: N
   }
 };
 
-export const getAllAssetsController = async (_req: Request, res: Response, next: NextFunction) => {
+export const getAllAssetsController = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const assets = await getAllAssets();
+    const query = typeof req.query.q === 'string' ? req.query.q : undefined;
+    const assets = await getAllAssets(query);
     res.status(200).json({ assets });
   } catch (error) {
     next(error);
