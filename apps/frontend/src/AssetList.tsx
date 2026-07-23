@@ -1,24 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import { AssetFormat, type Asset } from '../../backend/src/types';
-import { formatSize } from 'types';
-
-const parseKeywords = (keywords?: string): string[] => {
-  if (!keywords) return [];
-  return Array.from(
-    new Set(
-      keywords
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter(Boolean),
-    ),
-  );
-};
+import type { Asset } from '../../backend/src/types';
+import { formatSize, parseKeywords } from 'types';
+import { AssetModal } from './AssetModal';
 
 export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
 
   const fetchAssets = useCallback(async (query?: string) => {
     try {
@@ -91,9 +81,22 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
       ) : (
         <div className="asset-grid">
           {assets.map((asset) => (
-            <div key={asset.id} className="asset-card" title={asset.filename}>
+            <div
+              key={asset.id}
+              className="asset-card"
+              title={`Click to view ${asset.filename}`}
+              onClick={() => setSelectedAsset(asset)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedAsset(asset);
+                }
+              }}
+            >
               <div className="asset-icon">
-                {asset.type === AssetFormat.IMAGE ? (
+                {asset.type === 'IMAGE' ? (
                   <img
                     src={`/api/assets/${asset.id}/content`}
                     alt={asset.filename}
@@ -136,6 +139,8 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
           ))}
         </div>
       )}
+
+      {selectedAsset && <AssetModal asset={selectedAsset} onClose={() => setSelectedAsset(null)} />}
     </div>
   );
 };
