@@ -4,9 +4,9 @@
 
 **Blocked by:** 06 — Image Upload Support, 08 — AI Metadata Generation (Documents)
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] Backend converts the image buffer for Gemini Vision compatibility.
-- [ ] Backend prompts Gemini to describe the image visually.
-- [ ] Backend saves the resulting `AssetMetadata`.
-- [ ] Frontend displays the tags next to the image thumbnail.
+- [x] Backend converts the image buffer for Gemini Vision compatibility.
+- [x] Backend prompts Gemini to describe the image visually.
+- [x] Backend saves the resulting `AssetMetadata`.
+- [x] Frontend displays the tags next to the image thumbnail.
