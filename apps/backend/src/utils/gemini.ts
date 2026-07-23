@@ -1,18 +1,20 @@
 import { GoogleGenAI } from '@google/genai';
 import config from 'config';
 import { logger } from './logger';
+import { AssetFormat, type GeneratedMetadata } from '../types';
 
-export type GeneratedMetadata = {
-  description: string;
-  keywords: string;
-};
+export type { GeneratedMetadata };
 
-export const generateDocumentMetadata = async (
-  extractedText: string,
+interface FormatMetadataStrategy {
+  generate(buffer: Buffer, mimeType: string): Promise<GeneratedMetadata | null>;
+}
+
+const queryGeminiModel = async (
+  contents: string | Array<string | { inlineData: { data: string; mimeType: string } }>,
+  logContext: string,
 ): Promise<GeneratedMetadata | null> => {
   try {
-    const apiKey = config.has('gemini.apiKey') ? config.get<string>('gemini.apiKey') : '';
-
+    const apiKey = config.get<string>('gemini.apiKey');
     const modelName = config.get<string>('gemini.model');
 
     if (!apiKey) {
@@ -22,40 +24,27 @@ export const generateDocumentMetadata = async (
 
     const ai = new GoogleGenAI({ apiKey });
 
-    const prompt = `Analyze the following document text and return a JSON object with two properties:
-1. "description": A concise 1-2 sentence summary of the document.
-2. "keywords": A comma-separated string of 3-5 relevant keywords/tags.
-
-Do not include any extra commentary. Output JSON only.
-
-Document text:
-${extractedText}`;
-
     const response = await ai.models.generateContent({
       model: modelName,
-      contents: prompt,
+      contents,
     });
 
-    const textResponse = (response.text || '').trim();
-
-    const cleanJson = textResponse
+    const rawText = (response.text || '').trim();
+    const cleanJson = rawText
       .replace(/^```json\s*/i, '')
       .replace(/^```\s*/, '')
       .replace(/\s*```$/, '')
       .trim();
 
-    const parsed = JSON.parse(cleanJson);
-
-    const description = typeof parsed.description === 'string' ? parsed.description : '';
-    const keywords = Array.isArray(parsed.keywords)
-      ? parsed.keywords.join(', ')
-      : typeof parsed.keywords === 'string'
-        ? parsed.keywords
-        : '';
+    const parsed = JSON.parse(cleanJson || '{}');
 
     return {
-      description,
-      keywords,
+      description: typeof parsed.description === 'string' ? parsed.description : '',
+      keywords: Array.isArray(parsed.keywords)
+        ? parsed.keywords.join(', ')
+        : typeof parsed.keywords === 'string'
+          ? parsed.keywords
+          : '',
     };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
@@ -68,8 +57,68 @@ ${extractedText}`;
         'Gemini API quota or rate limit exceeded (429 RESOURCE_EXHAUSTED); skipping AI metadata generation.',
       );
     } else {
-      logger.error({ error: message }, 'Failed to generate document metadata via Gemini');
+      logger.error({ err: error }, `Failed to generate ${logContext} via Gemini`);
     }
     return null;
   }
+};
+
+// --- STRATEGY IMPLEMENTATIONS ---
+
+class TextMetadataStrategy implements FormatMetadataStrategy {
+  async generate(buffer: Buffer, _mimeType: string): Promise<GeneratedMetadata | null> {
+    const text = buffer.toString('utf-8');
+    if (!text.trim()) return null;
+
+    const prompt = `Analyze the following document text and return a JSON object with two properties:
+1. "description": A concise 1-2 sentence summary of the document.
+2. "keywords": A comma-separated string of 3-5 relevant keywords/tags.
+
+Do not include any extra commentary. Output JSON only.
+
+Document text:
+${text}`;
+
+    return queryGeminiModel(prompt, 'document metadata');
+  }
+}
+
+class ImageMetadataStrategy implements FormatMetadataStrategy {
+  async generate(buffer: Buffer, mimeType: string): Promise<GeneratedMetadata | null> {
+    const imagePart = {
+      inlineData: {
+        data: buffer.toString('base64'),
+        mimeType,
+      },
+    };
+
+    const prompt = `Analyze the following image and return a JSON object with two properties:
+1. "description": A concise 1-2 sentence visual description of what is depicted in the image.
+2. "keywords": A comma-separated string of 3-5 relevant keywords/tags describing the image content, colors, objects, or scene.
+
+Do not include any extra commentary. Output JSON only.`;
+
+    return queryGeminiModel([imagePart, prompt], 'image metadata');
+  }
+}
+
+// Strategy Registry
+const formatStrategies: Partial<Record<AssetFormat, FormatMetadataStrategy>> = {
+  [AssetFormat.TEXT]: new TextMetadataStrategy(),
+  [AssetFormat.IMAGE]: new ImageMetadataStrategy(),
+};
+
+// Single Public Entry Point
+export const generateMetadataForAsset = async (
+  type: AssetFormat,
+  buffer: Buffer,
+  mimeType: string,
+): Promise<GeneratedMetadata | null> => {
+  const strategy = formatStrategies[type];
+  if (!strategy) {
+    logger.info(`No metadata generator configured for asset format: ${type}`);
+    return null;
+  }
+
+  return strategy.generate(buffer, mimeType);
 };

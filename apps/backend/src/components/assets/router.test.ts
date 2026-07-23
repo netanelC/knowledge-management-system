@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import app from '../../index';
 import * as geminiModule from '../../utils/gemini';
@@ -9,6 +9,11 @@ const createMockTextFile = () => ({
 });
 
 describe('Assets API', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.spyOn(geminiModule, 'generateMetadataForAsset').mockResolvedValue(null);
+  });
+
   describe('POST /api/assets', () => {
     it('should upload a file and return metadata', async () => {
       // Arrange
@@ -35,7 +40,7 @@ describe('Assets API', () => {
 
     it('should generate metadata for text documents when Gemini is configured', async () => {
       // Arrange
-      const geminiSpy = vi.spyOn(geminiModule, 'generateDocumentMetadata').mockResolvedValueOnce({
+      const geminiSpy = vi.spyOn(geminiModule, 'generateMetadataForAsset').mockResolvedValueOnce({
         description: 'Mock document description',
         keywords: 'mock, text, test',
       });
@@ -79,6 +84,39 @@ describe('Assets API', () => {
       const asset = response.body;
       expect(asset).toHaveProperty('id');
       expect(asset).toHaveProperty('type', 'IMAGE');
+    });
+
+    it('should generate visual metadata for image uploads when Gemini is configured', async () => {
+      // Arrange
+      const geminiVisionSpy = vi
+        .spyOn(geminiModule, 'generateMetadataForAsset')
+        .mockResolvedValueOnce({
+          description: 'Mock visual image description',
+          keywords: 'mock, image, visual, test',
+        });
+
+      const mockFile = {
+        content: 'fake image content ' + Math.random().toString(),
+        filename: 'mockimage_' + Date.now() + '.png',
+      };
+      const buffer = Buffer.from(mockFile.content);
+
+      // Act
+      const response = await request(app)
+        .post('/api/assets')
+        .attach('file', buffer, { filename: mockFile.filename, contentType: 'image/png' });
+
+      // Assert
+      expect(response.status).toBe(201);
+      const asset = response.body;
+      expect(asset).toHaveProperty('metadata');
+      expect(asset.metadata).toEqual({
+        assetId: asset.id,
+        description: 'Mock visual image description',
+        keywords: 'mock, image, visual, test',
+      });
+
+      geminiVisionSpy.mockRestore();
     });
 
     it('should return 400 if no file is uploaded', async () => {

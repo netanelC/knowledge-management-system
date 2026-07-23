@@ -6,10 +6,10 @@ import {
   getAllAssetsFromDb,
   getAssetS3Object as getS3ObjectDAL,
 } from './DAL';
-import { CreateAssetInput } from './types';
-import { Asset, AssetFormat } from '../../types';
+import type { CreateAssetInput } from './types';
+import { AssetFormat, type Asset } from '../../types';
 import { logger } from '../../utils/logger';
-import { generateDocumentMetadata } from '../../utils/gemini';
+import { generateMetadataForAsset } from '../../utils/gemini';
 import { ALLOWED_TEXT_EXTENSIONS, ALLOWED_IMAGE_EXTENSIONS } from 'types';
 
 export const isValidAssetFile = (
@@ -43,23 +43,18 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
     extractedText,
   });
 
+  const generated = await generateMetadataForAsset(input.type, input.buffer, input.mimetype);
+
   let metadataRecord = null;
-  if (extractedText && extractedText.trim().length > 0) {
+  if (generated) {
     try {
-      const generated = await generateDocumentMetadata(extractedText);
-      if (generated) {
-        metadataRecord = await createAssetMetadataInDb({
-          assetId: asset.id,
-          description: generated.description,
-          keywords: generated.keywords,
-        });
-      }
+      metadataRecord = await createAssetMetadataInDb({
+        assetId: asset.id,
+        description: generated.description,
+        keywords: generated.keywords,
+      });
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      logger.error(
-        { error: message, assetId: asset.id },
-        'Failed to generate metadata for document asset',
-      );
+      logger.error({ err: error, assetId: asset.id }, 'Failed to save asset metadata in database');
     }
   }
 
@@ -72,7 +67,7 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
       await deleteAssetFromDb(asset.id);
     } catch (deleteError) {
       logger.error(
-        { error: deleteError },
+        { err: deleteError },
         `Failed to clean up stranded DB record for asset ${asset.id}`,
       );
     }
@@ -86,9 +81,9 @@ export const createAssetRecord = async (input: CreateAssetInput): Promise<Asset>
 };
 
 export const getAllAssets = async (): Promise<Asset[]> => {
-  return await getAllAssetsFromDb();
+  return getAllAssetsFromDb();
 };
 
 export const getAssetS3Object = async (id: string) => {
-  return await getS3ObjectDAL(id);
+  return getS3ObjectDAL(id);
 };
