@@ -1,5 +1,5 @@
 import { prisma } from '../../utils/prisma';
-import { HeadBucketCommand } from '@aws-sdk/client-s3';
+import { HeadBucketCommand, CreateBucketCommand } from '@aws-sdk/client-s3';
 import { getS3Client, getS3Bucket } from '../../utils/s3';
 
 export const isDatabaseHealthy = async (): Promise<boolean> => {
@@ -15,7 +15,11 @@ export const isStorageHealthy = async (): Promise<boolean> => {
   try {
     const bucket = getS3Bucket();
     const client = getS3Client();
-    await client.send(new HeadBucketCommand({ Bucket: bucket }));
+    try {
+      await client.send(new HeadBucketCommand({ Bucket: bucket }));
+    } catch (_err) {
+      await client.send(new CreateBucketCommand({ Bucket: bucket }));
+    }
     return true;
   } catch (_error) {
     return false;

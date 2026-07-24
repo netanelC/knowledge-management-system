@@ -28,15 +28,34 @@ services:
       - key: PORT
         value: 3000
       - key: S3_ENDPOINT
-        sync: false
+        value: http://kms-minio:9000
       - key: S3_BUCKET_NAME
-        sync: false
+        value: kms-assets
       - key: AWS_ACCESS_KEY_ID
-        sync: false
+        value: minioadmin
       - key: AWS_SECRET_ACCESS_KEY
-        sync: false
+        value: minioadmin
+      - key: AWS_S3_FORCE_PATH_STYLE
+        value: "true"
       - key: GEMINI_API_KEY
         sync: false
+
+  # ==========================================
+  # MinIO S3 Storage Container Service
+  # ==========================================
+  - type: web
+    name: kms-minio
+    env: image
+    image:
+      url: docker.io/minio/minio:latest
+    dockerCommand: server /data --console-address ":9001"
+    plan: free
+    region: oregon
+    envVars:
+      - key: MINIO_ROOT_USER
+        value: minioadmin
+      - key: MINIO_ROOT_PASSWORD
+        value: minioadmin
 
 # ==========================================
 # Managed PostgreSQL Database
