@@ -1,17 +1,6 @@
 services:
   # ==========================================
-  # Frontend Web Service (Nginx React SPA)
-  # ==========================================
-  - type: web
-    name: kms-frontend
-    env: docker
-    dockerfilePath: ./apps/frontend/Dockerfile
-    dockerContext: .
-    plan: free
-    region: oregon
-
-  # ==========================================
-  # Backend API Service (Express + Prisma)
+  # 1. Backend API Service (Express + Prisma)
   # ==========================================
   - type: web
     name: kms-backend
@@ -39,6 +28,24 @@ services:
         value: "true"
       - key: GEMINI_API_KEY
         sync: false
+
+  # ==========================================
+  # 2. Frontend Web Service (Nginx React SPA)
+  #    Depends on kms-backend to deploy AFTER backend
+  # ==========================================
+  - type: web
+    name: kms-frontend
+    env: docker
+    dockerfilePath: ./apps/frontend/Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    envVars:
+      - key: BACKEND_HOST
+        fromService:
+          type: web
+          name: kms-backend
+          property: host
 
 # ==========================================
 # Managed PostgreSQL Database
