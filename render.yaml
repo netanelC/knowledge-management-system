@@ -9,10 +9,6 @@ services:
     dockerContext: .
     plan: free
     region: oregon
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
 
   # ==========================================
   # Backend API Service (Express + Prisma)
