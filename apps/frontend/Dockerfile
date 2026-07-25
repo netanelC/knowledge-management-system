@@ -24,16 +24,23 @@ RUN pnpm install --config.ignore-scripts=true
 # Copy source code
 COPY --from=prepare /app/out/full/ .
 
+# Declare build args
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Generate Prisma Client & Build Frontend
 RUN pnpm --filter backend exec prisma generate
 RUN pnpm turbo run build --filter=frontend...
 
 # ==========================================
-# Stage 3: Runner (Serve via Nginx)
+# Stage 3: Runner (Serve SPA via serve)
 # ==========================================
-FROM nginx:alpine AS runner
-COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
-COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+FROM node:24-alpine AS runner
+WORKDIR /app
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+RUN npm install -g serve
+
+COPY --from=builder /app/apps/frontend/dist ./dist
+
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]

@@ -3,6 +3,8 @@ import type { FormEvent } from 'react';
 import { ALLOWED_ALL_EXTENSIONS } from '@backend/types';
 import type { Asset } from '@backend/types';
 
+import { API_BASE } from './config';
+
 type UploadFormProps = {
   onSuccess?: () => void;
 };
@@ -32,7 +34,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSuccess }) => {
     formData.append('file', file);
 
     try {
-      const res = await fetch('/api/assets', {
+      const res = await fetch(`${API_BASE}/api/assets`, {
         method: 'POST',
         body: formData,
       });

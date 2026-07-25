@@ -3,12 +3,14 @@ import type { HealthResponse } from '@backend/types';
 import { UploadForm } from './UploadForm';
 import { AssetList } from './AssetList';
 
+import { API_BASE } from './config';
+
 function App() {
   const [status, setStatus] = useState<HealthResponse | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
-    fetch('/api/health')
+    fetch(`${API_BASE}/api/health`)
       .then((res) => res.json())
       .then((data) => setStatus(data))
       .catch((err) => console.error(err));
