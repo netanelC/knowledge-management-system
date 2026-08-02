@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { formatSize, parseKeywords, type Asset } from '@backend/types';
 import { AssetModal } from './AssetModal';
 
+import { API_BASE } from './config';
+
 export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,8 +15,8 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
     try {
       setLoading(true);
       const url = query?.trim()
-        ? `/api/assets?q=${encodeURIComponent(query.trim())}`
-        : '/api/assets';
+        ? `${API_BASE}/api/assets?q=${encodeURIComponent(query.trim())}`
+        : `${API_BASE}/api/assets`;
       const res = await fetch(url);
       if (!res.ok) throw new Error('Failed to fetch assets');
       const data = await res.json();
@@ -97,7 +99,7 @@ export const AssetList = ({ refreshTrigger }: { refreshTrigger?: number }) => {
               <div className="asset-icon">
                 {asset.type === 'IMAGE' ? (
                   <img
-                    src={`/api/assets/${asset.id}/content`}
+                    src={`${API_BASE}/api/assets/${asset.id}/content`}
                     alt={asset.filename}
                     className="asset-thumbnail"
                   />

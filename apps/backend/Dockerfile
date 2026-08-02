@@ -44,6 +44,6 @@ COPY --from=builder /app .
 
 WORKDIR /app/apps/backend
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/index.js"]

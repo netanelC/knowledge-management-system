@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { formatSize, parseKeywords, type Asset } from '@backend/types';
 
+import { API_BASE } from './config';
+
 export type AssetModalProps = {
   asset: Asset;
   onClose: () => void;
@@ -37,7 +39,7 @@ export const AssetModal = ({ asset, onClose }: AssetModalProps) => {
       const fetchContent = async () => {
         try {
           setLoadingContent(true);
-          const res = await fetch(`/api/assets/${asset.id}/content`);
+          const res = await fetch(`${API_BASE}/api/assets/${asset.id}/content`);
           if (!res.ok) throw new Error('Failed to load document content');
           const text = await res.text();
           setTextContent(text);
@@ -61,7 +63,7 @@ export const AssetModal = ({ asset, onClose }: AssetModalProps) => {
     }
   };
 
-  const contentUrl = `/api/assets/${asset.id}/content`;
+  const contentUrl = `${API_BASE}/api/assets/${asset.id}/content`;
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
